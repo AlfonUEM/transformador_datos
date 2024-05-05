@@ -26,6 +26,9 @@ import runTransformerFunction from "../utils/TransformerFunctionsUtils";
 function FunctionCreatorSteps(){
     const [activeStepIndex, setActiveStepIndex] = React.useState(0)
 
+    const [temporarySummary, setTemporarySummary] = React.useState("TODO")
+
+
     const [functionName, setFunctionName] = React.useState("")
     const [functionDescription, setFunctionDescription] = React.useState("")
 
@@ -265,7 +268,7 @@ function FunctionCreatorSteps(){
             }
             activeStepIndex={activeStepIndex}
             allowSkipTo
-            onSubmit={() => console.log(exportFunctionToJson())}
+            onSubmit={() => {setTemporarySummary(exportFunctionToJson()); console.log(exportFunctionToJson())}}
             steps={[
                 {
                     title: "Datos básicos",
@@ -337,45 +340,17 @@ function FunctionCreatorSteps(){
                     isOptional: false
                 },
                 {
-                    title: "Review and launch",
+                    title: "Revisión y creación",
                     content: (
                         <SpaceBetween size="xs">
-                            <Header
-                                variant="h3"
-                                actions={
-                                    <Button
-                                        onClick={() => setActiveStepIndex(0)}
-                                    >
-                                        Edit
-                                    </Button>
-                                }
-                            >
-                                Step 1: Instance type
-                            </Header>
                             <Container
                                 header={
                                     <Header variant="h2">
-                                        Container title
+                                        Revisión y creación
                                     </Header>
                                 }
                             >
-                                <ColumnLayout
-                                    columns={2}
-                                    variant="text-grid"
-                                >
-                                    <div>
-                                        <Box variant="awsui-key-label">
-                                            First field
-                                        </Box>
-                                        <div>Value</div>
-                                    </div>
-                                    <div>
-                                        <Box variant="awsui-key-label">
-                                            Second Field
-                                        </Box>
-                                        <div>Value</div>
-                                    </div>
-                                </ColumnLayout>
+                                <code>{temporarySummary}</code>
                             </Container>
                         </SpaceBetween>
                     )

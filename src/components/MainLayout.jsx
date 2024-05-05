@@ -65,7 +65,7 @@ function MainLayout({
                                     info={<Link>Info</Link>}
                                     description={sectionDescription}
                                     actions={
-                                        <Button variant="primary">Button</Button>
+                                        <Button variant="primary" href="#createFunction">Crear Función</Button>
                                     }
                                 >
                                     {sectionTitle}

@@ -15,7 +15,7 @@ class App extends React.Component {
                 <HashRouter>
                     <Routes>
                         <Route path="createFunction" element={<CreateFunctionPage />} />
-                        <Route path="craeteUser" element={<CreateUserPage />} />
+                        <Route path="createUser" element={<CreateUserPage />} />
                         <Route path="/" element={<MainPage />}/>
                     </Routes>
                 </HashRouter>

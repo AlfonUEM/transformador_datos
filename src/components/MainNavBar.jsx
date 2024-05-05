@@ -5,14 +5,14 @@ function MainNavBar() {
         <TopNavigation
             identity={{
                 href: "#",
-                title: "Service",
+                title: "Maestro Codificador",
                 logo: {
                     src: "/logo-small-top-navigation.svg",
-                    alt: "Service"
+                    alt: "Maestro Codificador"
                 }
             }}
             utilities={[
-                {
+                /*{
                     type: "button",
                     text: "Link",
                     href: "https://example.com/",
@@ -42,40 +42,16 @@ function MainNavBar() {
                             text: "Project settings"
                         }
                     ]
-                },
+                },*/
                 {
                     type: "menu-dropdown",
-                    text: "Customer Name",
-                    description: "email@example.com",
+                    text: "Usuario: pepe",
+                    description: "pepe@gmail.com",
                     iconName: "user-profile",
                     items: [
-                        {id: "profile", text: "Profile"},
-                        {id: "preferences", text: "Preferences"},
-                        {id: "security", text: "Security"},
-                        {
-                            id: "support-group",
-                            text: "Support",
-                            items: [
-                                {
-                                    id: "documentation",
-                                    text: "Documentation",
-                                    href: "#",
-                                    external: true,
-                                    externalIconAriaLabel:
-                                        " (opens in new tab)"
-                                },
-                                {id: "support", text: "Support"},
-                                {
-                                    id: "feedback",
-                                    text: "Feedback",
-                                    href: "#",
-                                    external: true,
-                                    externalIconAriaLabel:
-                                        " (opens in new tab)"
-                                }
-                            ]
-                        },
-                        {id: "signout", text: "Sign out"}
+                        {id: "profile", text: "Opciones de cuenta"},
+                        {id: "newaccount", text: "Registrarse", href: "/#createUser"},
+                        {id: "signout", text: "Cerrar sesión"}
                     ]
                 }
             ]}
