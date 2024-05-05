@@ -45,13 +45,12 @@ function MainNavBar() {
                 },*/
                 {
                     type: "menu-dropdown",
-                    text: "Usuario: pepe",
-                    description: "pepe@gmail.com",
+                    text: "Usuario",
+                    description: "Registrese o inicie sesión",
                     iconName: "user-profile",
                     items: [
-                        {id: "profile", text: "Opciones de cuenta"},
                         {id: "newaccount", text: "Registrarse", href: "/#createUser"},
-                        {id: "signout", text: "Cerrar sesión"}
+                        {id: "login", text: "Iniciar sesión"}
                     ]
                 }
             ]}
