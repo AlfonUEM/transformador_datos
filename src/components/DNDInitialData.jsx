@@ -14,17 +14,17 @@ const initialData = {
     columns: {
         'public_functions_column': {
             id: 'public_functions_column',
-            title: 'Public Functions',
+            title: 'Funciones públicas',
             functionIds: ['task-1', 'task-2', 'task-3', 'task-4'],
         },
         'private_functions_column': {
             id: 'private_functions_column',
-            title: 'Private functions',
+            title: 'Funciones privadas',
             functionIds: ['task-5', 'task-6', 'task-7', 'task-8'],
         },
         'active_functions_column': {
             id: 'active_functions_column',
-            title: 'Active functions',
+            title: 'Funciones activas',
             functionIds: [],
         },
 
