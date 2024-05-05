@@ -2,7 +2,8 @@ import React from 'react';
 import FunctionCreatorStepsLayout from "../components/FunctionCreatorStepsLayout";
 import FunctionCreatorSteps from "../components/FunctionCreatorSteps";
 import MainLayout from "../components/MainLayout";
-function MainPage(){
+
+function CreateFunctionPage() {
     return (
         <>
             <FunctionCreatorStepsLayout
@@ -15,4 +16,4 @@ function MainPage(){
     );
 }
 
-export default MainPage;
+export default CreateFunctionPage;

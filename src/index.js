@@ -5,6 +5,7 @@ import TestPage from "./pages/TestPage";
 import MainPage from "./pages/MainPage";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import CreateFunctionPage from "./pages/CreateFunctionPage";
+import CreateUserPage from "./pages/CreateUserPage";
 
 class App extends React.Component {
 
@@ -13,7 +14,8 @@ class App extends React.Component {
             <React.StrictMode>
                 <HashRouter>
                     <Routes>
-                        <Route path="craeteFunction" element={<CreateFunctionPage />} />
+                        <Route path="createFunction" element={<CreateFunctionPage />} />
+                        <Route path="craeteUser" element={<CreateUserPage />} />
                         <Route path="/" element={<MainPage />}/>
                     </Routes>
                 </HashRouter>
