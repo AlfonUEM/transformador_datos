@@ -1,24 +1,16 @@
 import React from 'react';
 import {
-    CodeEditor,
-    ColumnLayout,
     Container, FormField,
-    Header, Input, Link, Select,
+    Header, Input, Link,
     Checkbox,
     DatePicker,
     ProgressBar,
-    Flashbar,
 } from "@cloudscape-design/components";
-import Box from "@cloudscape-design/components/box";
 import Wizard from "@cloudscape-design/components/wizard";
-import AttributeEditor from "@cloudscape-design/components/attribute-editor";
-
-
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import Button from "@cloudscape-design/components/button";
 
 
-function CreatorUser() {
+function CreatorUser({setItems}) {
     const [activeStepIndex, setActiveStepIndex] = React.useState(0)
 
     const [name, setName] = React.useState("")
@@ -36,7 +28,16 @@ function CreatorUser() {
         if (user !== "" && password !== "" && checked) {
             console.log(exportFunctionToJson())
         } else {
-            console.log("Complete todos los campos antes de continuar")
+            // item para flashbar en página layout
+                setItems([{
+                type: "info",
+                dismissible: true,
+                dismissLabel: "Dismiss message",
+                onDismiss: () => setItems([]),
+                content: "Complete todos los campos y acepte los términos y condiciones antes de continuar.",
+                id: "message_2"
+            }]);
+            console.log("Complete todos los campos antes de continuar.")
         }
     }
 
@@ -45,10 +46,20 @@ function CreatorUser() {
         switch (activeStepIndex) {
             case 0:
                 if (name !== "" && lastName !== "" && email !== "" && date !== "") {
+                    setItems([])
                     setActiveStepIndex(requestedStepIndex)
                     break
                 } else {
-                    console.log("Complete todos los campos antes de continuar")
+                    // item para flashbar en página layout
+                        setItems([{
+                        type: "info",
+                        dismissible: true,
+                        dismissLabel: "Dismiss message",
+                        onDismiss: () => setItems([]),
+                        content: "Complete todos los campos antes de continuar.",
+                        id: "message_1"
+                    }]);
+                    console.log("Complete todos los campos antes de continuar.")
                     break
                 }
             case 1:

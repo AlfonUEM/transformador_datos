@@ -1,8 +1,7 @@
 import React from 'react';
 import {
     AppLayout,
-    BreadcrumbGroup,
-
+    BreadcrumbGroup, Flashbar,
 } from '@cloudscape-design/components';
 import MainNavBar from "./MainNavBar";
 
@@ -12,6 +11,11 @@ function CreatorUserLayout({
                                sectionDescription,
                                sectionContent
                            }) {
+
+    const [items, setItems] = React.useState([]);
+
+    const contentWithProp = React.cloneElement(sectionContent, {setItems});
+
     return (
         <>
             <MainNavBar/>
@@ -25,8 +29,9 @@ function CreatorUserLayout({
                     />
                 }
                 navigationHide={true}
+                notifications={ <Flashbar items={items}/> }
                 toolsHide={true}
-                content={sectionContent}
+                content={contentWithProp}
                 disableContentPaddings={false}
             />
         </>
