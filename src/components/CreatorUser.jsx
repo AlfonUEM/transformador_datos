@@ -9,25 +9,6 @@ import {
 import Wizard from "@cloudscape-design/components/wizard";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 
-// Verifica que la contraseña tenga una longitud mínima de 8, una minúscula, una mayuscula, un número y un símbolo
-function ValidatePassword(password) {
-    if (password.length < 8) {
-        return false;
-    }
-    if (!/[a-z]/.test(password)) {
-        return false;
-    }
-    if (!/[A-Z]/.test(password)) {
-        return false;
-    }
-    if (!/\d/.test(password)) {
-        return false;
-    }
-    if (!/[^a-zA-Z0-9]/.test(password)) {
-        return false;
-    }
-    return true;
-}
 
 function CreatorUser({setItems}) {
     const [activeStepIndex, setActiveStepIndex] = React.useState(0)
@@ -43,6 +24,26 @@ function CreatorUser({setItems}) {
     const [password, setPassword] = React.useState("");
     const [repassword, setRePassword] = React.useState("");
     const [checked, setChecked] = React.useState(false);
+
+    // Verifica que la contraseña tenga una longitud mínima de 8, una minúscula, una mayuscula, un número y un símbolo
+    function ValidatePassword(password) {
+        if (password.length < 8) {
+            return false;
+        }
+        if (!/[a-z]/.test(password)) {
+            return false;
+        }
+        if (!/[A-Z]/.test(password)) {
+            return false;
+        }
+        if (!/\d/.test(password)) {
+            return false;
+        }
+        if (!/[^a-zA-Z0-9]/.test(password)) {
+            return false;
+        }
+        return true;
+    }
 
     const validateSubmit = () => {
         if (user !== "" && password !== "" && repassword !== "" && checked) {
@@ -159,6 +160,9 @@ function CreatorUser({setItems}) {
         return JSON.stringify(functionObject);
     }
 
+    const cancelHandler = () => {
+        window.location.href = '#';
+    };
 
     return (
         <Wizard
@@ -179,6 +183,7 @@ function CreatorUser({setItems}) {
             onNavigate={validateNext}
             activeStepIndex={activeStepIndex}
             allowSkipTo
+            onCancel={cancelHandler}
             onSubmit={validateSubmit}
             steps={[
                 {
@@ -332,14 +337,6 @@ function CreatorUser({setItems}) {
                                         Estoy de acuerdo con los términos y condiciones
                                     </Checkbox>
                                 </FormField>
-                                {/*                                <Checkbox
-                                    onChange={({detail}) =>
-                                        setChecked(detail.checked)
-                                    }
-                                    checked={checked}
-                                >
-                                    Estoy de acuerdo con los términos y condiciones
-                                </Checkbox>*/}
                             </SpaceBetween>
                         </Container>
                     ),
