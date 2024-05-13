@@ -9,6 +9,25 @@ import {
 import Wizard from "@cloudscape-design/components/wizard";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 
+// Verifica que la contraseña tenga una longitud mínima de 8, una minúscula, una mayuscula, un número y un símbolo
+function ValidatePassword(password) {
+    if (password.length < 8) {
+        return false;
+    }
+    if (!/[a-z]/.test(password)) {
+        return false;
+    }
+    if (!/[A-Z]/.test(password)) {
+        return false;
+    }
+    if (!/\d/.test(password)) {
+        return false;
+    }
+    if (!/[^a-zA-Z0-9]/.test(password)) {
+        return false;
+    }
+    return true;
+}
 
 function CreatorUser({setItems}) {
     const [activeStepIndex, setActiveStepIndex] = React.useState(0)
@@ -22,14 +41,38 @@ function CreatorUser({setItems}) {
     const [provincia, setProvincia] = React.useState("");
     const [user, setUser] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [repassword, setRePassword] = React.useState("");
     const [checked, setChecked] = React.useState(false);
 
     const validateSubmit = () => {
-        if (user !== "" && password !== "" && checked) {
-            console.log(exportFunctionToJson())
+        if (user !== "" && password !== "" && repassword !== "" && checked) {
+            if(!ValidatePassword(password)){
+                setItems([{
+                    type: "error",
+                    dismissible: true,
+                    dismissLabel: "Dismiss message",
+                    onDismiss: () => setItems([]),
+                    content: "La contraseña debe tener mínimo 8 carácteres," +
+                        " una minúscula, una mayuscula, un número y un símbolo.",
+                    id: "message_3"
+                }]);
+            } else {
+                if(password === repassword){
+                    console.log(exportFunctionToJson())
+                } else {
+                    setItems([{
+                        type: "warning",
+                        dismissible: true,
+                        dismissLabel: "Dismiss message",
+                        onDismiss: () => setItems([]),
+                        content: "Las contraseñas introducidas deben ser iguales.",
+                        id: "message_4"
+                    }]);
+                }
+            }
         } else {
             // item para flashbar en página layout
-                setItems([{
+            setItems([{
                 type: "info",
                 dismissible: true,
                 dismissLabel: "Dismiss message",
@@ -51,7 +94,7 @@ function CreatorUser({setItems}) {
                     break
                 } else {
                     // item para flashbar en página layout
-                        setItems([{
+                    setItems([{
                         type: "info",
                         dismissible: true,
                         dismissLabel: "Dismiss message",
@@ -66,6 +109,7 @@ function CreatorUser({setItems}) {
                 setActiveStepIndex(requestedStepIndex)
                 break
             case 2:
+                setItems([]) // Borra flashbar en caso de pulsar boton Anterior
                 setActiveStepIndex(requestedStepIndex)
                 break
             default:
@@ -256,6 +300,11 @@ function CreatorUser({setItems}) {
                                     <Input type="password"
                                            value={password}
                                            onChange={({detail}) => setPassword(detail.value)}/>
+                                </FormField>
+                                <FormField label="Repita la contraseña">
+                                    <Input type="password"
+                                           value={repassword}
+                                           onChange={({detail}) => setRePassword(detail.value)}/>
                                 </FormField>
                                 <FormField
                                     description={
