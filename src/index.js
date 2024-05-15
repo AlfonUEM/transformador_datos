@@ -14,7 +14,7 @@ class App extends React.Component {
             <React.StrictMode>
                 <HashRouter>
                     <Routes>
-                        <Route path="createFunction" element={<CreateFunctionPage />} />
+                        <Route path="createFunction" element={<CreateFunctionPage/>} />
                         <Route path="createUser" element={<CreateUserPage />} />
                         <Route path="/" element={<MainPage />}/>
                     </Routes>

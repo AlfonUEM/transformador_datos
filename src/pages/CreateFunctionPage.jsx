@@ -1,7 +1,7 @@
 import React from 'react';
 import FunctionCreatorStepsLayout from "../components/FunctionCreatorStepsLayout";
 import FunctionCreatorSteps from "../components/FunctionCreatorSteps";
-import MainLayout from "../components/MainLayout";
+
 
 function CreateFunctionPage() {
     return (
@@ -10,7 +10,7 @@ function CreateFunctionPage() {
 
                 sectionTitle="Creador de funciones"
                 sectionDescription="Crea una nueva función para ser utilizada en el transformador de datos"
-                sectionContent={<FunctionCreatorSteps/>}
+                sectionContent={<FunctionCreatorSteps />}
             />
         </>
     );
