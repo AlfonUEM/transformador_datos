@@ -167,10 +167,9 @@ function CreatorUser({setItems}) {
         setVisible(false);
     }
      const confirmModal = () => {
-         //window.location.href = '#';
+         window.location.href = '#';
      }
     const cancelHandler = () => {
-        //window.location.href = '#';
         setVisible(true);
     };
 
@@ -359,6 +358,8 @@ function CreatorUser({setItems}) {
             <Modal
                 onDismiss={() => setVisible(false)}
                 visible={visible}
+                header="Cancelar registro usuario"
+                closeAriaLabel="Close dialog"
                 footer={
                     <Box float="right">
                         <SpaceBetween direction="horizontal" size="xs">
@@ -367,7 +368,7 @@ function CreatorUser({setItems}) {
                         </SpaceBetween>
                     </Box>
                 }
-                header="Cancelar registro usuario"
+
             >
                 ¿Está seguro de que desea cancelar el registro y volver a la página principal?
             </Modal>
