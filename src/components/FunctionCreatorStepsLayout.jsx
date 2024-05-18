@@ -44,12 +44,12 @@ function FunctionCreatorStepsLayout({
                 notifications={
                     <Flashbar
                         items={[
-                            /*{
+                            {
                                 type: 'info',
                                 dismissible: true,
                                 content: 'This is an info flash message.',
                                 id: 'message_1',
-                            },*/
+                            },
                         ]}
                     />
                 }

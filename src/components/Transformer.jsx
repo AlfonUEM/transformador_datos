@@ -22,7 +22,6 @@ function Transformer(){
     const [transformationOutput, setTransformationOutput] = React.useState("aqui va la salida");
     const [inputValue, setInputValue] = React.useState("");
 
-
     const [dndState, setDndState] = React.useState(initialData);
     const onDragEnd = result => {
         const { destination, source, draggableId } = result;
@@ -92,7 +91,8 @@ function Transformer(){
 
         // clone from available functions to active functions column
         if (srcColumn !== dstColumn && dstColumn.id === "active_functions_column"){
-            const clonedFunction = {...dndState.availableFunctions[draggableId], id:uuidv4()};
+            const clonedFunction = structuredClone(dndState.availableFunctions[draggableId]);
+            clonedFunction.id = uuidv4();
 
             const updatedActiveFunctions = {...dndState.activeFunctions};
             updatedActiveFunctions[clonedFunction.id] = clonedFunction;
@@ -127,6 +127,12 @@ function Transformer(){
         transformData();
     }, [dndState, inputValue]);
 
+    function updateFunctionParameters(functionId, jsParameters){
+        let updatedDNDState = {...dndState}
+        updatedDNDState.activeFunctions[functionId].jsParameters = {...jsParameters};
+        updateDNDFunctions(updatedDNDState);
+        console.log(dndState);
+    }
     function transformData(){
         let output = null;
         let input = inputValue;
@@ -161,12 +167,16 @@ function Transformer(){
                                     column={dndState.columns["public_functions_column"]}
                                     dndFunctions={dndState.columns["public_functions_column"].functionIds.map(functionId => dndState.availableFunctions[functionId])}
                                     isDropDisabled={true}
+                                    dndState={dndState}
+                                    updateFunctionParameters={updateFunctionParameters}
                         />
                         <DNDColumn
                             key={dndState.columns["private_functions_column"].id}
                             column={dndState.columns["private_functions_column"]}
                             dndFunctions={dndState.columns["private_functions_column"].functionIds.map(functionId => dndState.availableFunctions[functionId])}
                             isDropDisabled={true}
+                            dndState={dndState}
+                            updateFunctionParameters={updateFunctionParameters}
                         />
                         </SpaceBetween>
                     </div>
@@ -176,6 +186,8 @@ function Transformer(){
                             column={dndState.columns["active_functions_column"]}
                             dndFunctions={dndState.columns["active_functions_column"].functionIds.map(functionId => dndState.activeFunctions[functionId])}
                             isDropDisabled={false}
+                            dndState={dndState}
+                            updateFunctionParameters={updateFunctionParameters}
                         />
                     </div>
                     </Grid>

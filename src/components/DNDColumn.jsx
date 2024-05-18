@@ -27,7 +27,7 @@ export default class DNDColumn extends React.Component {
                     <Droppable droppableId={this.props.column.id} isDropDisabled={this.props.isDropDisabled}>
                         {provided => (
                             <FunctionsList ref={provided.innerRef} {...provided.droppableProps}>
-                                {this.props.dndFunctions.map((dndFunction, index) => <DNDFunction index={index} key={dndFunction.id} dndFunction={dndFunction} />)}
+                                {this.props.dndFunctions.map((dndFunction, index) => <DNDFunction index={index} key={dndFunction.id} dndState={this.props.dndState} dndFunction={dndFunction} currentColumn={this.props.column.id} updateFunctionParameters={this.props.updateFunctionParameters}/>)}
                                 {provided.placeholder}
                             </FunctionsList>
                         )}
