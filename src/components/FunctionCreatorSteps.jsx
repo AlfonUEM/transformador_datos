@@ -2,12 +2,13 @@ import React from 'react';
 import {
     CodeEditor,
     ColumnLayout,
-    Container, FormField,
-    Header, Input, Link, Select,
+    Container, CopyToClipboard, FormField,
+    Header, Input, Link, Select, Table,
 } from "@cloudscape-design/components";
 import Box from "@cloudscape-design/components/box";
 import Wizard from "@cloudscape-design/components/wizard";
 import AttributeEditor from "@cloudscape-design/components/attribute-editor";
+import { getTestInput } from "../utils/TransformerFunctionsUtils"
 
 import 'ace-builds/css/ace.css';
 import 'ace-builds/css/theme/cloud_editor.css';
@@ -17,34 +18,25 @@ import 'ace-builds/css/theme/cloud_editor_dark.css';
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Button from "@cloudscape-design/components/button";
 import runTransformerFunction from "../utils/TransformerFunctionsUtils";
+import {CodeView} from "@cloudscape-design/code-view";
+import javascriptHighlight from "@cloudscape-design/code-view/highlight/javascript";
 
 
-
-
-
+const FUNCTION_INITIAL_STR = "function transform(input, parameters){"
 
 function FunctionCreatorSteps(){
     const [activeStepIndex, setActiveStepIndex] = React.useState(0)
 
     const [temporarySummary, setTemporarySummary] = React.useState("TODO")
 
+    const [testOutput, setTestOutput] = React.useState("")
+    const [testError, setTestError] = React.useState("")
 
     const [functionName, setFunctionName] = React.useState("")
     const [functionDescription, setFunctionDescription] = React.useState("")
 
-    // ejemplo para attibute-editor
-    const [functionParameters, setFunctionParameters] = React.useState([
-        /*{
-            key: "some-key-1",
-            value: "some-value-1",
-            type: { label: "String", value: "str" }
-        },
-        {
-            key: "some-key-2",
-            value: "some-value-2",
-            type: { label: "Entero", value: "int" }
-        }*/
-    ]);
+
+    const [functionParameters, setFunctionParameters] = React.useState([]);
 
 
     const [changeParameterType, setChangeParameterType] = React.useState(false)
@@ -182,9 +174,13 @@ function FunctionCreatorSteps(){
 
 
     const [codeEditorValue, setCodeEditorValue] = React.useState("function transform(input, parameters){\n\n\t// tu código va aquí\n\n}");
+    const [inputEditorValue, setInputEditorValue] = React.useState("//establece el valor de entrada de tu función a continuaciónn\n\nlet input = \"\";");
     const [codeEditorPreferences, setCodeEditorPreferences] = React.useState({});
+    const [inputEditorPreferences, setInputEditorPreferences] = React.useState({});
     const [codeEditorLoading, setCodeEditorLoading] = React.useState(true);
+    const [inputEditorLoading, setInputEditorLoading] = React.useState(true);
     const [ace, setAce] = React.useState();
+    const [aceInput, setAceInput] = React.useState();
 
     React.useEffect(() => {
         async function loadAce() {
@@ -195,8 +191,8 @@ function FunctionCreatorSteps(){
         }
 
         loadAce()
-            .then(ace => setAce(ace))
-            .finally(() => setCodeEditorLoading(false));
+            .then(ace => {setAce(ace); setAceInput(ace)})
+            .finally(() => {setCodeEditorLoading(false); setInputEditorLoading(false)});
     }, []);
 
     const codeEditorI18nStrings = {
@@ -245,7 +241,52 @@ function FunctionCreatorSteps(){
         return JSON.stringify(functionObject);
     }
 
+    function translate_boolean(true_or_false){
+        if(true_or_false === true){
+            return "Verdadero";
+        }else{
+            return "Falso";
+        }
+    }
 
+    function modifyCode(new_value){
+        if(new_value.startsWith(FUNCTION_INITIAL_STR)){
+            setCodeEditorValue(new_value);
+        }else{
+            setCodeEditorValue(FUNCTION_INITIAL_STR + new_value.substring(FUNCTION_INITIAL_STR.length));
+        }
+    }
+
+    function modifyTestInput(new_value){
+        setInputEditorValue(new_value);
+    }
+
+    React.useEffect(() => {
+        transformDataTest();
+    }, [inputEditorValue]);
+
+    function transformDataTest(){
+        const [errorProcessingInput, outputProcessingInput] = getTestInput(inputEditorValue);
+        let functionInput;
+        if(errorProcessingInput){
+            setTestError("Excepción al procesar su código de generación de input (no se ha llegado a ejecutar su función):\n\n" + errorProcessingInput);
+            setTestOutput("");
+        }else{
+            setTestError("");
+            functionInput = outputProcessingInput;
+            let functionAndParams = JSON.parse(exportFunctionToJson());
+            const [errorInFunction, outputFromFunction] = runTransformerFunction(functionInput, functionAndParams.jsParameters, functionAndParams.jsCode)
+            if(errorInFunction){
+                setTestError("Excepción al ejecutar su función con los valores por defecto de los parámetros y la entrada definida arriba:\n\n" + errorInFunction);
+                setTestOutput("");
+            }else{
+                setTestError("");
+                setTestOutput(outputFromFunction);
+            }
+
+        }
+
+    }
 
     return (
         <Wizard
@@ -268,7 +309,7 @@ function FunctionCreatorSteps(){
             }
             activeStepIndex={activeStepIndex}
             allowSkipTo
-            onSubmit={() => {setTemporarySummary(exportFunctionToJson()); console.log(exportFunctionToJson())}}
+            onSubmit={() => {setTemporarySummary(exportFunctionToJson()); console.log(exportFunctionToJson()); console.log(functionParameters)}}
             steps={[
                 {
                     title: "Datos básicos",
@@ -328,7 +369,7 @@ function FunctionCreatorSteps(){
                                 ace={ace}
                                 value={codeEditorValue}
                                 language="javascript"
-                                onDelayedChange={event => setCodeEditorValue(event.detail.value)}
+                                onChange={event => modifyCode(event.detail.value)}
                                 preferences={codeEditorPreferences}
                                 onPreferencesChange={event => setCodeEditorPreferences(event.detail)}
                                 loading={codeEditorLoading}
@@ -340,17 +381,165 @@ function FunctionCreatorSteps(){
                     isOptional: false
                 },
                 {
+                    title: "Laboratorio",
+                    description: "En esta página usted debe probar su función de modo que retorne sin errores con los valores por defecto de los parámetros",
+                    content: (
+                        <SpaceBetween size="m">
+                            <Table
+                                columnDefinitions={[
+                                    {
+                                        id: "paramName",
+                                        header: "Nombre",
+                                        cell: item => item.key,
+                                    },
+                                    {
+                                        id: "paramType",
+                                        header: "Tipo de dato",
+                                        cell: item => item.type.label,
+
+                                    },
+                                    {
+                                        id: "paramDefaultValue",
+                                        header: "Valor por defecto",
+                                        cell: item => item.type.value === "bool" ? translate_boolean(item.value.value) : item.value,
+                                    },
+                                    {
+                                        id: "paramAccessCode",
+                                        header: "Acceso desde código",
+                                        cell: item => 'parameters["' + item.key + '"]',
+                                    },
+
+                                ]}
+                                enableKeyboardNavigation
+                                items={functionParameters}
+                                loadingText="Cargando"
+                                sortingDisabled
+                                empty={
+                                    <Box
+                                        margin={{ vertical: "xs" }}
+                                        textAlign="center"
+                                        color="inherit"
+                                    >
+                                        <b>La función no tiene parametros definidos</b>
+                                    </Box>
+                                }
+                                header={<Header variant="h2">Parámetros</Header>}
+                            />
+
+                            <Container header={<Header variant="h2">Código</Header>}>
+                                <CodeView
+                                    content={codeEditorValue}
+                                    highlight={javascriptHighlight}
+                                />
+                            </Container>
+                            <Container header={<Header variant="h2">Entrada</Header>}>
+                                <CodeEditor
+                                    ace={aceInput}
+                                    value={inputEditorValue}
+                                    language="javascript"
+                                    onDelayedChange={event => modifyTestInput(event.detail.value)}
+                                    preferences={inputEditorPreferences}
+                                    onPreferencesChange={event => setInputEditorPreferences(event.detail)}
+                                    loading={inputEditorLoading}
+                                    i18nStrings={codeEditorI18nStrings}
+                                    themes={{ light: ['cloud_editor'], dark: ['cloud_editor_dark'] }}
+                                    editorContentHeight={100}
+                                />
+                            </Container>
+
+                            <Container header={<Header variant="h2">Salida</Header>}>
+                                <CodeView
+                                    content={testOutput}
+                                />
+                            </Container>
+
+                            <Container header={<Header variant="h2">Excepciones</Header>}>
+                                <CodeView
+                                    content={testError}
+                                />
+                            </Container>
+
+                        </SpaceBetween>
+                    ),
+                    isOptional: false
+                },
+                {
                     title: "Revisión y creación",
                     content: (
-                        <SpaceBetween size="xs">
-                            <Container
-                                header={
-                                    <Header variant="h2">
-                                        Revisión y creación
-                                    </Header>
-                                }
-                            >
-                                <code>{temporarySummary}</code>
+                        <SpaceBetween size="m">
+                            <Container header={<Header variant="h2">Datos básicos</Header>}>
+                                <ColumnLayout columns={2} variant="text-grid">
+                                    <SpaceBetween size="l">
+                                        <div>
+                                            <Box variant="awsui-key-label">Nombre</Box>
+                                            <div>{functionName}</div>
+                                        </div>
+                                    </SpaceBetween>
+                                    <SpaceBetween size="l">
+                                        <div>
+                                            <Box variant="awsui-key-label">Descripción</Box>
+                                            <div>{functionDescription}</div>
+                                        </div>
+                                    </SpaceBetween>
+                                </ColumnLayout>
+                            </Container>
+
+                                <Table
+                                    columnDefinitions={[
+                                        {
+                                            id: "paramName",
+                                            header: "Nombre",
+                                            cell: item => item.key,
+                                        },
+                                        {
+                                            id: "paramType",
+                                            header: "Tipo de dato",
+                                            cell: item => item.type.label,
+
+                                        },
+                                        {
+                                            id: "paramDefaultValue",
+                                            header: "Valor por defecto",
+                                            cell: item => item.type.value === "bool" ? translate_boolean(item.value.value) : item.value,
+                                        },
+                                        {
+                                            id: "paramAccessCode",
+                                            header: "Acceso desde código",
+                                            cell: item => 'parameters["' + item.key + '"]',
+                                        },
+
+                                    ]}
+                                    enableKeyboardNavigation
+                                    items={functionParameters}
+                                    loadingText="Cargando"
+                                    sortingDisabled
+                                    empty={
+                                        <Box
+                                            margin={{ vertical: "xs" }}
+                                            textAlign="center"
+                                            color="inherit"
+                                        >
+                                                <b>La función no tiene parametros definidos</b>
+                                        </Box>
+                                    }
+                                    header={<Header variant="h2">Parámetros</Header>}
+                                />
+
+
+
+
+
+
+
+
+                            <Container header={<Header variant="h2">Código</Header>}>
+
+                                    <CodeView
+                                        content={codeEditorValue}
+                                        highlight={javascriptHighlight}
+                                    />
+
+
                             </Container>
                         </SpaceBetween>
                     )

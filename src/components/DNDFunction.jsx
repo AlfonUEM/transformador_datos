@@ -25,7 +25,7 @@ export default class DNDFunction extends React.Component {
                     <FunctionContainer {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
                         {this.props.currentColumn === "active_functions_column" ?
                             <Grid gridDefinition={[{colspan: 10}, {colspan: 2}]}>
-                                <div /*style={{color: "#fbfbfb"}}*/>
+                                <div style={{"cursor": "grab"}}>
                                     {this.props.dndFunction.content}
                                 </div>
                                 <div>

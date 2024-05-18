@@ -13,15 +13,32 @@ function extractInputParameters(funcParameters){
     return inputParameters;
 }
 
+export function getTestInput(inputCode){
+    let errorReturned = null;
+    let output = null;
+    let extendedInputCode = inputCode + "; return input;";
+    try {
+        let func = new Function(extendedInputCode);
+        output = func();
+    } catch (error) {
+        errorReturned = error.stack;
+    }
+    console.log(errorReturned)
+    return [errorReturned, output]
+}
+
 function runTransformerFunction(input, funcParameters, functionCode){
     let errorReturned = null;
     let output = null;
     let srcToEval = "";
     srcToEval = functionCode.replace(functionCodePrefacePattern, "");
     srcToEval = srcToEval.replace(functionCodeEndPattern, "");
-    let func = new Function("input", "parameters", srcToEval);
-    output = func(input, extractInputParameters(funcParameters));
-    console.log(output);
+    try {
+        let func = new Function("input", "parameters", srcToEval);
+        output = func(input, extractInputParameters(funcParameters));
+    } catch (error) {
+        errorReturned = error.stack;
+    }
     return [errorReturned, output]
 
 }
