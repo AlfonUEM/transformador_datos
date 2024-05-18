@@ -6,7 +6,7 @@ import {
     Grid,
     Header, Input, Modal, Select,
     Textarea,
-    TextContent
+    TextContent, Toggle
 } from "@cloudscape-design/components";
 import Box from "@cloudscape-design/components/box";
 import runTransformerFunction from "../utils/TransformerFunctionsUtils"
@@ -20,13 +20,15 @@ import { CodeView } from "@cloudscape-design/code-view";
 import Button from "@cloudscape-design/components/button";
 
 function Transformer(){
-    const [transformationOutput, setTransformationOutput] = React.useState("aqui va la salida");
+    const [transformationOutput, setTransformationOutput] = React.useState("");
+    const [transformationError, setTransformationError] = React.useState("");
     const [inputValue, setInputValue] = React.useState("");
     const [modalSaveActiveFunctionsVisible, setModalSaveActiveFunctionsVisible] = React.useState(false);
     const [modalLoadActiveFunctionsVisible, setModalLoadActiveFunctionsVisible] = React.useState(false);
     const [dndState, setDndState] = React.useState(initialData);
     const [saveCombinationName, setSaveCombinationName] = React.useState("");
     const [loadCombinationName, setLoadCombinationName] = React.useState({});
+    const [debugEnabled, setDebugEnabled] = React.useState(false)
     const onDragEnd = result => {
         const { destination, source, draggableId } = result;
 
@@ -164,7 +166,7 @@ function Transformer(){
     function transformData(){
         let output = null;
         let input = inputValue;
-        let errorReturned = false;
+        let errorReturned = null;
         dndState.columns["active_functions_column"].functionIds.forEach((functionId) =>{
             if(!errorReturned){
                 [errorReturned, output] = runTransformerFunction(input, dndState.activeFunctions[functionId].jsParameters, dndState.activeFunctions[functionId].jsCode);
@@ -172,7 +174,8 @@ function Transformer(){
             }
         });
         if(errorReturned){
-            return "ERROR";
+            setTransformationOutput("ERROR");
+            setTransformationError(errorReturned)
         }else{
             setTransformationOutput(output);
         }
@@ -252,6 +255,30 @@ function Transformer(){
                                         textToCopy={transformationOutput}
                                     />}
                             />
+                            <Toggle
+                                onChange={({ detail }) =>
+                                    setDebugEnabled(detail.checked)
+                                }
+                                checked={debugEnabled}
+                            >
+                                Modo Debug
+                            </Toggle>
+
+                            {debugEnabled &&
+                                <>
+                                    <Header variant="h4">Excepciones</Header>
+                                    <CodeView
+                                        content={transformationError}
+                                        actions={
+                                            <CopyToClipboard
+                                                copyButtonAriaLabel="Copiar"
+                                                copyErrorText="Fallo al copiar"
+                                                copySuccessText="Copiado"
+                                                textToCopy={transformationError}
+                                            />}
+                                    />
+                                </>
+                            }
                         </SpaceBetween>
                     </Container>
 
