@@ -2,9 +2,9 @@ import React from 'react';
 import {
     Container,
     ContentLayout, CopyToClipboard,
-    Flashbar,
+    Flashbar, FormField,
     Grid,
-    Header,
+    Header, Input, Modal, Select,
     Textarea,
     TextContent
 } from "@cloudscape-design/components";
@@ -17,12 +17,16 @@ import { DragDropContext } from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { CodeView } from "@cloudscape-design/code-view";
+import Button from "@cloudscape-design/components/button";
 
 function Transformer(){
     const [transformationOutput, setTransformationOutput] = React.useState("aqui va la salida");
     const [inputValue, setInputValue] = React.useState("");
-
+    const [modalSaveActiveFunctionsVisible, setModalSaveActiveFunctionsVisible] = React.useState(false);
+    const [modalLoadActiveFunctionsVisible, setModalLoadActiveFunctionsVisible] = React.useState(false);
     const [dndState, setDndState] = React.useState(initialData);
+    const [saveCombinationName, setSaveCombinationName] = React.useState("");
+    const [loadCombinationName, setLoadCombinationName] = React.useState({});
     const onDragEnd = result => {
         const { destination, source, draggableId } = result;
 
@@ -133,6 +137,30 @@ function Transformer(){
         updateDNDFunctions(updatedDNDState);
         console.log(dndState);
     }
+
+    function openSaveActiveFunctionsModal(){
+        setModalSaveActiveFunctionsVisible(true);
+    }
+
+    function saveActiveFunctions(){
+        console.log("TODO: save the current active functions as " + saveCombinationName);
+        console.log(JSON.stringify(dndState.activeFunctions));
+        setSaveCombinationName("")
+        setModalSaveActiveFunctionsVisible(false);
+
+    }
+
+    function openLoadActiveFunctionsModal(){
+        setModalLoadActiveFunctionsVisible(true);
+    }
+
+    function loadActiveFunctions(){
+        console.log("TODO: load the active function " + loadCombinationName);
+
+        setModalLoadActiveFunctionsVisible(false);
+
+    }
+
     function transformData(){
         let output = null;
         let input = inputValue;
@@ -152,6 +180,8 @@ function Transformer(){
     }
 
     return (
+        <>
+
         <Grid
             gridDefinition={[{colspan: 5}, {colspan: 7}]}
         >
@@ -169,6 +199,8 @@ function Transformer(){
                                     isDropDisabled={true}
                                     dndState={dndState}
                                     updateFunctionParameters={updateFunctionParameters}
+                                    openSaveActiveFunctionsModal={openSaveActiveFunctionsModal}
+                                    openLoadActiveFunctionsModal={openLoadActiveFunctionsModal}
                         />
                         <DNDColumn
                             key={dndState.columns["private_functions_column"].id}
@@ -177,6 +209,8 @@ function Transformer(){
                             isDropDisabled={true}
                             dndState={dndState}
                             updateFunctionParameters={updateFunctionParameters}
+                            openSaveActiveFunctionsModal={openSaveActiveFunctionsModal}
+                            openLoadActiveFunctionsModal={openLoadActiveFunctionsModal}
                         />
                         </SpaceBetween>
                     </div>
@@ -188,6 +222,8 @@ function Transformer(){
                             isDropDisabled={false}
                             dndState={dndState}
                             updateFunctionParameters={updateFunctionParameters}
+                            openSaveActiveFunctionsModal={openSaveActiveFunctionsModal}
+                            openLoadActiveFunctionsModal={openLoadActiveFunctionsModal}
                         />
                     </div>
                     </Grid>
@@ -221,6 +257,66 @@ function Transformer(){
 
             </div>
         </Grid>
+        <Modal
+            visible={modalSaveActiveFunctionsVisible}
+            onDismiss={() => setModalSaveActiveFunctionsVisible(false)}
+            header="Guardar combinación de funciones"
+            footer={
+                <Box float="right">
+                    <SpaceBetween direction="horizontal" size="xs">
+                        <Button variant="secondary" onClick={() => setModalSaveActiveFunctionsVisible(false)}>Cancelar</Button>
+                        <Button variant="primary" onClick={()=> saveActiveFunctions()}>Guardar</Button>
+                    </SpaceBetween>
+                </Box>
+            }
+        >
+            <FormField
+                label="Nombre de la combinación"
+                description="Nombre con el que posteriormente podrás cargar la combinación de funciones actual"
+            >
+                <Input
+                    value={saveCombinationName}
+                    onChange={event => setSaveCombinationName(event.detail.value)}/>
+            </FormField>
+
+        </Modal>
+        <Modal
+            visible={modalLoadActiveFunctionsVisible}
+            onDismiss={() => setModalLoadActiveFunctionsVisible(false)}
+            header="Cargar combinación de funciones"
+            footer={
+                <Box float="right">
+                    <SpaceBetween direction="horizontal" size="xs">
+                        <Button variant="secondary" onClick={() => setModalLoadActiveFunctionsVisible(false)}>Cancelar</Button>
+                        <Button variant="primary" onClick={()=> loadActiveFunctions()}>Cargar</Button>
+                    </SpaceBetween>
+                </Box>
+            }
+        >
+            <FormField
+                label="Nombre de la combinación"
+                description="Selecciona la combinación de funciones que deseas cargar"
+            >
+                <Select
+                    selectedOption={loadCombinationName}
+                    onChange={({ detail }) =>
+                        setLoadCombinationName(detail.selectedOption)
+                    }
+                    options={[
+                        { label: "Option 1", value: "1" },
+                        { label: "Option 2", value: "2" },
+                        { label: "Option 3", value: "3" },
+                        { label: "Option 4", value: "4" },
+                        { label: "Option 5", value: "5" }
+                    ]}
+                />
+
+            </FormField>
+
+        </Modal>
+
+
+        </>
     );
 }
 

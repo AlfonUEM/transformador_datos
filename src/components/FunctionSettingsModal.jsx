@@ -20,7 +20,7 @@ function FunctionSettingsModal(props){
                 footer={
                     <Box float="right">
                         <SpaceBetween direction="horizontal" size="xs">
-                            <Button variant="primary">Cerrar</Button>
+                            <Button variant="primary" onClick={() => setModalVisible(false)}>Cerrar</Button>
                         </SpaceBetween>
                     </Box>
                 }
