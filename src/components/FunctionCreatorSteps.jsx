@@ -35,6 +35,8 @@ function FunctionCreatorSteps(){
     const [functionName, setFunctionName] = React.useState("")
     const [functionDescription, setFunctionDescription] = React.useState("")
 
+    const [functionNameFormFieldError, setFunctionNameFormFieldError] = React.useState("")
+    const [functionDescriptionFormFieldError, setFunctionDescriptionFormFieldError] = React.useState("")
 
     const [functionParameters, setFunctionParameters] = React.useState([]);
 
@@ -288,6 +290,53 @@ function FunctionCreatorSteps(){
 
     }
 
+    const validateNextStep = (event) => {
+        const requestedStepIndex = event.detail.requestedStepIndex;
+        switch (activeStepIndex) {
+            case 0:
+                if (functionName !== "" && functionDescription !== "") {
+                    setActiveStepIndex(requestedStepIndex)
+                } else {
+                    if(functionName === ""){
+                        setFunctionNameFormFieldError("El nombre no puede estar vacío")
+                    }
+                    if(functionDescription === ""){
+                        setFunctionDescriptionFormFieldError("La descripción no puede estar vacía")
+                    }
+                }
+                break
+            case 1:
+                setActiveStepIndex(requestedStepIndex)
+                break
+            case 2:
+                setActiveStepIndex(requestedStepIndex)
+                break
+            case 3:
+                setActiveStepIndex(requestedStepIndex)
+                break
+            case 4:
+                setActiveStepIndex(requestedStepIndex)
+                break
+            default:
+                console.log("Error: Paso no válido")
+                break
+        }
+    }
+
+    function validatedSetFunctionName(value){
+        if(value !== ""){
+            setFunctionNameFormFieldError("");
+        }
+        setFunctionName(value);
+    }
+
+    function validatedSetFunctionDescription(value){
+        if(value !== ""){
+            setFunctionDescriptionFormFieldError("");
+        }
+        setFunctionDescription(value);
+    }
+
     return (
         <Wizard
             i18nStrings={{
@@ -304,9 +353,7 @@ function FunctionCreatorSteps(){
                 submitButton: "Crear función",
                 optional: "opcional"
             }}
-            onNavigate={({ detail }) =>
-                setActiveStepIndex(detail.requestedStepIndex)
-            }
+            onNavigate={(event) => validateNextStep(event)}
             activeStepIndex={activeStepIndex}
             allowSkipTo
             onSubmit={() => {setTemporarySummary(exportFunctionToJson()); console.log(exportFunctionToJson()); console.log(functionParameters)}}
@@ -325,11 +372,11 @@ function FunctionCreatorSteps(){
                             }
                         >
                             <SpaceBetween direction="vertical" size="l">
-                                <FormField label="Nombre de la función">
-                                    <Input value={functionName} onChange={({ detail }) => setFunctionName(detail.value)}/>
+                                <FormField label="Nombre de la función" errorText={functionNameFormFieldError}>
+                                    <Input value={functionName} onChange={({ detail }) => validatedSetFunctionName(detail.value)}/>
                                 </FormField>
-                                <FormField label="Descripción">
-                                    <Input value={functionDescription} onChange={({ detail }) => setFunctionDescription(detail.value)}/>
+                                <FormField label="Descripción" errorText={functionDescriptionFormFieldError}>
+                                    <Input value={functionDescription} onChange={({ detail }) => validatedSetFunctionDescription(detail.value)}/>
                                 </FormField>
                             </SpaceBetween>
                         </Container>
