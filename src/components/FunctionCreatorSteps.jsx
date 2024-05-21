@@ -115,6 +115,80 @@ function FunctionCreatorSteps(){
         );
     });
 
+    function verifyAllParameters(){
+        let functionParameterKeys = getFunctionParameterKeys();
+        if(new Set(functionParameterKeys).size !== functionParameterKeys.length) { // si hay duplicados
+            return false
+        }
+        functionParameters.forEach((parameter) =>{
+            if(checkParameterValue(parameter) !== null){
+                return false
+            }
+        });
+        return true;
+    }
+
+    function getFunctionParameterKeys(){
+        let paramKeys= functionParameters.map(param => param.key);
+        return paramKeys;
+    }
+
+    function isDuplicatedParameter(parameterKey){
+        let occurrences = 0;
+        console.log("LLLL")
+        console.log(functionParameters)
+        functionParameters.forEach((parameter) =>{
+            console.log("parameter.key: " + parameter.key);
+            console.log("parameterKey: " + parameterKey);
+            if(parameter.key === parameterKey){
+                occurrences++;
+            }
+            console.log("occurrence: " + occurrences);
+
+        });
+        if(occurrences>1){
+            return true
+        }else{
+            return false
+        }
+    }
+    function checkParameterKey(item){
+        if(item.key && !item.key.match(/^[a-z][a-z0-9-_]*$/i)){
+            return "Solo se admiten caracteres alfanuméricos, _ y -"
+        }else{
+            if(item.key && isDuplicatedParameter(item.key)){
+                return "Parámetro duplicado"
+            }else {
+                return null;
+            }
+        }
+    }
+
+    function checkParameterValue(item){
+        if(item.value){
+            if(item.type.value === "str"){
+                return null;
+            }else if (item.type.value === "int"){
+                if(!item.value.match(/^[0-9]+$/)){
+                    return "Solo valores numéricos";
+                }
+            }else if (item.type.value === "bool"){
+                return null;
+            }
+        }else{
+            if(item.type.value === "str"){
+                return null;
+            }else if (item.type.value === "int"){
+                if(!item.value.match(/^[0-9]+$/)){
+                    return "Valor requerido";
+                }
+            }else if (item.type.value === "bool"){
+                return "Valor requerido";
+            }
+        }
+    }
+
+
 
     const functionParametersDefinition = React.useMemo(
         () => [
@@ -123,7 +197,7 @@ function FunctionCreatorSteps(){
                 control: ({ key = '' }, itemIndex) => (
                     <InputForParameters prop="key" value={key} index={itemIndex} placeholder="Introduzca el nombre" setFunctionParameters={setFunctionParameters} />
                 ),
-                //errorText: item => (item.key && item.key.match(/^AWS/i) ? 'Key cannot start with "AWS"' : null),
+                errorText: item =>  checkParameterKey(item),
             },
             {
                 label: "Tipo",
@@ -161,12 +235,8 @@ function FunctionCreatorSteps(){
 
                     <InputForParameters prop="value" value={value} index={itemIndex} placeholder="Introduzca valor" setFunctionParameters={setFunctionParameters} />
                 ),
-                /*errorText: item =>
-                    item.value && item.value.length > 10 ? (
-                        <span>
-              Value {item.value} is longer than 10 characters, <Link variant="info">Info</Link>
-            </span>
-                    ) : null,*/
+                errorText: item =>
+                    checkParameterValue(item)
             },
 
         ],
@@ -178,6 +248,7 @@ function FunctionCreatorSteps(){
     const [codeEditorValue, setCodeEditorValue] = React.useState("function transform(input, parameters){\n\n\t// tu código va aquí\n\n}");
     const [inputEditorValue, setInputEditorValue] = React.useState("//establece el valor de entrada de tu función a continuaciónn\n\nlet input = \"\";");
     const [codeEditorPreferences, setCodeEditorPreferences] = React.useState({});
+    const [codeEditorReturnsErrors, setCodeEditorReturnsErrors] = React.useState(false);
     const [inputEditorPreferences, setInputEditorPreferences] = React.useState({});
     const [codeEditorLoading, setCodeEditorLoading] = React.useState(true);
     const [inputEditorLoading, setInputEditorLoading] = React.useState(true);
@@ -306,13 +377,22 @@ function FunctionCreatorSteps(){
                 }
                 break
             case 1:
-                setActiveStepIndex(requestedStepIndex)
+                setChangeParameterType(!changeParameterType);
+                if(verifyAllParameters()) {
+                    transformDataTest();
+                    setActiveStepIndex(requestedStepIndex)
+                }
                 break
             case 2:
-                setActiveStepIndex(requestedStepIndex)
+                if(!codeEditorReturnsErrors) {
+                    transformDataTest();
+                    setActiveStepIndex(requestedStepIndex)
+                }
                 break
             case 3:
-                setActiveStepIndex(requestedStepIndex)
+                if(testError === "") {
+                    setActiveStepIndex(requestedStepIndex)
+                }
                 break
             case 4:
                 setActiveStepIndex(requestedStepIndex)
@@ -422,6 +502,12 @@ function FunctionCreatorSteps(){
                                 loading={codeEditorLoading}
                                 i18nStrings={codeEditorI18nStrings}
                                 themes={{ light: ['cloud_editor'], dark: ['cloud_editor_dark'] }}
+                                onValidate={event => {
+                                                if(event.detail.annotations.length > 0){
+                                                    setCodeEditorReturnsErrors(true)
+                                                }else{
+                                                    setCodeEditorReturnsErrors(false)} }
+                                                }
                             />
                         </Container>
                     ),
