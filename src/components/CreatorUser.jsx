@@ -26,6 +26,15 @@ function CreatorUser({setItems}) {
     const [repassword, setRePassword] = React.useState("");
     const [checked, setChecked] = React.useState(false);
 
+    const [nameFormFieldError, setNameFormFieldError] = React.useState("")
+    const [lastNameFormFieldError, setLastNameFormFieldError] = React.useState("")
+    const [emailFormFieldError, setEmailFormFieldError] = React.useState("")
+    const [dateFormFieldError, setDateFormFieldError] = React.useState("")
+    const [userFormFieldError, setUserFormFieldError] = React.useState("");
+    const [passwordFormFieldError, setPasswordFormFieldError] = React.useState("");
+    const [repasswordFormFieldError, setRePasswordFormFieldError] = React.useState("");
+    const [checkedFormFieldError, setCheckedFormFieldError] = React.useState("");
+
     // Verifica que la contraseña tenga una longitud mínima de 8, una minúscula, una mayuscula, un número y un símbolo
     function ValidatePassword(password) {
         if (password.length < 8) {
@@ -49,40 +58,29 @@ function CreatorUser({setItems}) {
     const validateSubmit = () => {
         if (user !== "" && password !== "" && repassword !== "" && checked) {
             if (!ValidatePassword(password)) {
-                setItems([{
-                    type: "error",
-                    dismissible: true,
-                    dismissLabel: "Dismiss message",
-                    onDismiss: () => setItems([]),
-                    content: "La contraseña debe tener mínimo 8 carácteres," +
-                        " una minúscula, una mayuscula, un número y un símbolo.",
-                    id: "message_3"
-                }]);
+                setPasswordFormFieldError("La contraseña debe tener mínimo 8 carácteres," +
+                    " una minúscula, una mayuscula, un número y un símbolo.")
             } else {
                 if (password === repassword) {
+                    console.log("usaario creado");
                     console.log(exportFunctionToJson())
                 } else {
-                    setItems([{
-                        type: "warning",
-                        dismissible: true,
-                        dismissLabel: "Dismiss message",
-                        onDismiss: () => setItems([]),
-                        content: "Las contraseñas introducidas deben ser iguales.",
-                        id: "message_4"
-                    }]);
+                    setRePasswordFormFieldError("Las contraseñas introducidas deben ser iguales")
                 }
             }
         } else {
-            // item para flashbar en página layout
-            setItems([{
-                type: "info",
-                dismissible: true,
-                dismissLabel: "Dismiss message",
-                onDismiss: () => setItems([]),
-                content: "Complete todos los campos y acepte los términos y condiciones antes de continuar.",
-                id: "message_2"
-            }]);
-            console.log("Complete todos los campos antes de continuar.")
+            if (user === "") {
+                setUserFormFieldError("El usuario no puede estar vacío")
+            }
+            if (password === "") {
+                setPasswordFormFieldError("La contraseña no puede estar vacía")
+            }
+            if (repassword === "") {
+                setRePasswordFormFieldError("Repetir contraseña no puede estar vacío")
+            }
+            if (checked === false) {
+                setCheckedFormFieldError("Debe aceptar los terminos y condiciones")
+            }
         }
     }
 
@@ -91,27 +89,27 @@ function CreatorUser({setItems}) {
         switch (activeStepIndex) {
             case 0:
                 if (name !== "" && lastName !== "" && email !== "" && date !== "") {
-                    setItems([])
                     setActiveStepIndex(requestedStepIndex)
                     break
                 } else {
-                    // item para flashbar en página layout
-                    setItems([{
-                        type: "info",
-                        dismissible: true,
-                        dismissLabel: "Dismiss message",
-                        onDismiss: () => setItems([]),
-                        content: "Complete todos los campos antes de continuar.",
-                        id: "message_1"
-                    }]);
-                    console.log("Complete todos los campos antes de continuar.")
+                    if (name === "") {
+                        setNameFormFieldError("El nombre no puede estar vacío")
+                    }
+                    if (lastName === "") {
+                        setLastNameFormFieldError("Los apellidos no pueden estar vacíos")
+                    }
+                    if (email === "") {
+                        setEmailFormFieldError("El email no puede estar vacío")
+                    }
+                    if (date === "") {
+                        setDateFormFieldError("La fecha no puede estar vacía")
+                    }
                     break
                 }
             case 1:
                 setActiveStepIndex(requestedStepIndex)
                 break
             case 2:
-                setItems([]) // Borra flashbar en caso de pulsar boton Anterior
                 setActiveStepIndex(requestedStepIndex)
                 break
             default:
@@ -120,6 +118,62 @@ function CreatorUser({setItems}) {
         }
     }
 
+    // reseteo error campos al escribir
+    function validatedSetName(value) {
+        if (value !== "") {
+            setNameFormFieldError("");
+        }
+        setName(value);
+    }
+
+    function validatedSetLastName(value) {
+        if (value !== "") {
+            setLastNameFormFieldError("");
+        }
+        setLastName(value);
+    }
+
+    function validatedSetEmail(value) {
+        if (value !== "") {
+            setEmailFormFieldError("");
+        }
+        setEmail(value);
+    }
+
+    function validatedSetDate(value) {
+        if (value !== "") {
+            setDateFormFieldError("");
+        }
+        setDate(value);
+    }
+
+    function validatedSetUser(value) {
+        if (value !== "") {
+            setUserFormFieldError("");
+        }
+        setUser(value);
+    }
+
+    function validatedSetPassword(value) {
+        if (value !== "") {
+            setPasswordFormFieldError("");
+        }
+        setPassword(value);
+    }
+
+    function validatedSetRePassword(value) {
+        if (value !== "") {
+            setRePasswordFormFieldError("");
+        }
+        setRePassword(value);
+    }
+
+    function validatedSetchecked(value) {
+        if (value !== "") {
+            setCheckedFormFieldError("");
+        }
+        setChecked(value);
+    }
 
     // ejemplo para attibute-editor
     const [functionParameters, setFunctionParameters] = React.useState([]);
@@ -156,7 +210,7 @@ function CreatorUser({setItems}) {
             pais: pais,
             provincia: provincia,
             user: user,
-            password: password, // faltaría hashear
+            password: password,
         }
         return JSON.stringify(functionObject);
     }
@@ -166,9 +220,9 @@ function CreatorUser({setItems}) {
     const cancelModal = () => {
         setVisible(false);
     }
-     const confirmModal = () => {
-         window.location.href = '#';
-     }
+    const confirmModal = () => {
+        window.location.href = '#';
+    }
     const cancelHandler = () => {
         setVisible(true);
     };
@@ -215,24 +269,24 @@ function CreatorUser({setItems}) {
                                 }
                             >
                                 <SpaceBetween direction="vertical" size="s">
-                                    <FormField label="Nombre">
+                                    <FormField label="Nombre" errorText={nameFormFieldError}>
                                         <Input type="text"
                                                value={name}
-                                               onChange={({detail}) => setName(detail.value)}/>
+                                               onChange={({detail}) => validatedSetName(detail.value)}/>
                                     </FormField>
-                                    <FormField label="Apellidos">
+                                    <FormField label="Apellidos" errorText={lastNameFormFieldError}>
                                         <Input type="text"
                                                value={lastName}
-                                               onChange={({detail}) => setLastName(detail.value)}/>
+                                               onChange={({detail}) => validatedSetLastName(detail.value)}/>
                                     </FormField>
-                                    <FormField label="Email">
+                                    <FormField label="Email" errorText={emailFormFieldError}>
                                         <Input type="email"
                                                value={email}
-                                               onChange={({detail}) => setEmail(detail.value)}/>
+                                               onChange={({detail}) => validatedSetEmail(detail.value)}/>
                                     </FormField>
-                                    <FormField label="Fecha de nacimiento">
+                                    <FormField label="Fecha de nacimiento" errorText={dateFormFieldError}>
                                         <DatePicker
-                                            onChange={({detail}) => setDate(detail.value)}
+                                            onChange={({detail}) => validatedSetDate(detail.value)}
                                             value={date}
                                             openCalendarAriaLabel={selectedDate =>
                                                 "Choose certificate expiry date" +
@@ -307,20 +361,20 @@ function CreatorUser({setItems}) {
                                 }
                             >
                                 <SpaceBetween direction="vertical" size="s">
-                                    <FormField label="Nombre de usuario">
+                                    <FormField label="Nombre de usuario" errorText={userFormFieldError}>
                                         <Input type="text"
                                                value={user}
-                                               onChange={({detail}) => setUser(detail.value)}/>
+                                               onChange={({detail}) => validatedSetUser(detail.value)}/>
                                     </FormField>
-                                    <FormField label="Contraseña">
+                                    <FormField label="Contraseña" errorText={passwordFormFieldError}>
                                         <Input type="password"
                                                value={password}
-                                               onChange={({detail}) => setPassword(detail.value)}/>
+                                               onChange={({detail}) => validatedSetPassword(detail.value)}/>
                                     </FormField>
-                                    <FormField label="Repita la contraseña">
+                                    <FormField label="Repita la contraseña" errorText={repasswordFormFieldError}>
                                         <Input type="password"
                                                value={repassword}
-                                               onChange={({detail}) => setRePassword(detail.value)}/>
+                                               onChange={({detail}) => validatedSetRePassword(detail.value)}/>
                                     </FormField>
                                     <FormField
                                         description={
@@ -338,10 +392,11 @@ function CreatorUser({setItems}) {
                                             </>
                                         }
                                         label="Términos y condiciones"
+                                        errorText={checkedFormFieldError}
                                     >
                                         <Checkbox
                                             onChange={({detail}) =>
-                                                setChecked(detail.checked)
+                                                validatedSetchecked(detail.checked)
                                             }
                                             checked={checked}
                                         >
@@ -359,7 +414,7 @@ function CreatorUser({setItems}) {
                 onDismiss={() => setVisible(false)}
                 visible={visible}
                 header="Cancelar registro usuario"
-                closeAriaLabel="Close dialog"
+                closeAriaLabel="Cerrar ventana"
                 footer={
                     <Box float="right">
                         <SpaceBetween direction="horizontal" size="xs">
