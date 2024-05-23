@@ -62,8 +62,16 @@ function CreatorUser({setItems}) {
                     " una minúscula, una mayuscula, un número y un símbolo.")
             } else {
                 if (password === repassword) {
-                    console.log("usaario creado");
                     console.log(exportFunctionToJson())
+                    setItems([{
+                        type: "success",
+                        dismissible: true,
+                        dismissLabel: "Dismiss message",
+                        onDismiss: () => setItems([]),
+                        content: "Usuario creado correctamente",
+                        id: "message_1"
+                    }]);
+                    window.location.href = '#';
                 } else {
                     setRePasswordFormFieldError("Las contraseñas introducidas deben ser iguales")
                 }

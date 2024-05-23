@@ -9,10 +9,10 @@ import MainNavBar from "./MainNavBar";
 function CreatorUserLayout({
                                sectionTitle,
                                sectionDescription,
-                               sectionContent
+                               sectionContent,
+                               items,
+                               setItems,
                            }) {
-
-    const [items, setItems] = React.useState([]);
 
     const contentWithProp = React.cloneElement(sectionContent, {setItems});
 
@@ -29,7 +29,7 @@ function CreatorUserLayout({
                     />
                 }
                 navigationHide={true}
-                notifications={ <Flashbar items={items}/> }
+                notifications={<Flashbar items={items}/>}
                 toolsHide={true}
                 content={contentWithProp}
                 disableContentPaddings={false}
