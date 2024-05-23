@@ -13,12 +13,16 @@ import Button from "@cloudscape-design/components/button";
 import MainNavBar from "./MainNavBar";
 
 
-
 function FunctionCreatorStepsLayout({
-                        sectionTitle,
-                        sectionDescription,
-                        sectionContent
-                    }){
+                                        sectionTitle,
+                                        sectionDescription,
+                                        sectionContent,
+                                        items,
+                                        setItems,
+                                    }) {
+
+    const contentWithProp = React.cloneElement(sectionContent, {setItems});
+
     return (
         <>
             <MainNavBar/>
@@ -26,8 +30,8 @@ function FunctionCreatorStepsLayout({
                 breadcrumbs={
                     <BreadcrumbGroup
                         items={[
-                            { text: 'Transformador de datos', href: '#' },
-                            { text: 'Crear función', href: '#craeteFunction' },
+                            {text: 'Transformador de datos', href: '#'},
+                            {text: 'Crear función', href: '#craeteFunction'},
                         ]}
                     />
                 }
@@ -41,22 +45,11 @@ function FunctionCreatorStepsLayout({
                     />
                 }*/
                 navigationHide={true}
-                notifications={
-                    <Flashbar
-                        items={[
-                            {
-                                type: 'info',
-                                dismissible: true,
-                                content: 'This is an info flash message.',
-                                id: 'message_1',
-                            },
-                        ]}
-                    />
-                }
+                notifications={<Flashbar items={items}/>}
                 /*toolsOpen={true}
                 tools={<HelpPanel header={<h2>Overview</h2>}>Help content</HelpPanel>}*/
                 toolsHide={true}
-                content={sectionContent}
+                content={contentWithProp}
                 disableContentPaddings={false}
                 /*splitPanel={<SplitPanel header="Split panel header">Split panel content</SplitPanel>}*/
 

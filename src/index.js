@@ -16,7 +16,7 @@ const App = () => {
                 <Routes>
                     <Route path="createFunction" element={<CreateFunctionPage items={items} setItems={setItems}/>}/>
                     <Route path="createUser" element={<CreateUserPage items={items} setItems={setItems}/>}/>
-                    <Route path="/" element={<MainPage/>}/>
+                    <Route path="/" element={<MainPage items={items} setItems={setItems}/>}/>
                 </Routes>
             </HashRouter>
         </React.StrictMode>

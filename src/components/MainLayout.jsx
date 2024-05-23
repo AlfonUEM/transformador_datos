@@ -13,12 +13,13 @@ import Button from "@cloudscape-design/components/button";
 import MainNavBar from "./MainNavBar";
 
 
-
 function MainLayout({
                         sectionTitle,
                         sectionDescription,
-                        sectionContent
-                    }){
+                        sectionContent,
+                        items,
+                        setItems
+                    }) {
     return (
         <>
             <MainNavBar/>
@@ -26,7 +27,7 @@ function MainLayout({
                 breadcrumbs={
                     <BreadcrumbGroup
                         items={[
-                            { text: 'Transformador de datos', href: '#' },
+                            {text: 'Transformador de datos', href: '#'},
                         ]}
                     />
                 }
@@ -40,18 +41,7 @@ function MainLayout({
                     />
                 }*/
                 navigationHide={true}
-                notifications={
-                    <Flashbar
-                        items={[
-                            {
-                                type: 'info',
-                                dismissible: true,
-                                content: 'This is an info flash message.',
-                                id: 'message_1',
-                            },
-                        ]}
-                    />
-                }
+                notifications={<Flashbar items={items}/>}
                 /*toolsOpen={true}
                 tools={<HelpPanel header={<h2>Overview</h2>}>Help content</HelpPanel>}*/
                 toolsHide={true}
@@ -70,17 +60,6 @@ function MainLayout({
                                 >
                                     {sectionTitle}
                                 </Header>
-
-                                <Flashbar
-                                    items={[
-                                        /*{
-                                            type: 'info',
-                                            dismissible: true,
-                                            content: 'This is an info flash message.',
-                                            id: 'message_1',
-                                        },*/
-                                    ]}
-                                />
                             </SpaceBetween>
                         }
                     >

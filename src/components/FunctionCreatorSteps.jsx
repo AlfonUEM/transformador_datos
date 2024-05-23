@@ -24,7 +24,7 @@ import javascriptHighlight from "@cloudscape-design/code-view/highlight/javascri
 
 const FUNCTION_INITIAL_STR = "function transform(input, parameters){"
 
-function FunctionCreatorSteps(){
+function FunctionCreatorSteps({setItems}){
     const [activeStepIndex, setActiveStepIndex] = React.useState(0)
 
     const [temporarySummary, setTemporarySummary] = React.useState("TODO")
@@ -314,6 +314,21 @@ function FunctionCreatorSteps(){
         return JSON.stringify(functionObject);
     }
 
+    function clickSubmit() {
+        setTemporarySummary(exportFunctionToJson());
+        console.log(exportFunctionToJson());
+        console.log(functionParameters);
+        setItems([{
+            type: "success",
+            dismissible: true,
+            dismissLabel: "Dismiss message",
+            onDismiss: () => setItems([]),
+            content: "Función creada correctamente",
+            id: "message_2"
+        }]);
+    }
+
+
     function translate_boolean(true_or_false){
         if(true_or_false === true){
             return "Verdadero";
@@ -436,7 +451,7 @@ function FunctionCreatorSteps(){
             onNavigate={(event) => validateNextStep(event)}
             activeStepIndex={activeStepIndex}
             allowSkipTo
-            onSubmit={() => {setTemporarySummary(exportFunctionToJson()); console.log(exportFunctionToJson()); console.log(functionParameters)}}
+            onSubmit={clickSubmit}
             steps={[
                 {
                     title: "Datos básicos",
