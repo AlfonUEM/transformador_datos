@@ -17,8 +17,8 @@ function MainLayout({
                         sectionTitle,
                         sectionDescription,
                         sectionContent,
-                        items,
-                        setItems
+                        notificationItems,
+                        addNotificationItem
                     }) {
     return (
         <>
@@ -41,7 +41,7 @@ function MainLayout({
                     />
                 }*/
                 navigationHide={true}
-                notifications={<Flashbar items={items}/>}
+                notifications={<Flashbar items={notificationItems}/>}
                 /*toolsOpen={true}
                 tools={<HelpPanel header={<h2>Overview</h2>}>Help content</HelpPanel>}*/
                 toolsHide={true}

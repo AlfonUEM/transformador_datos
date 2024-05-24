@@ -11,7 +11,7 @@ import Wizard from "@cloudscape-design/components/wizard";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 
 
-function CreatorUser({setItems}) {
+function CreatorUser({addNotificationItem}) {
     const [activeStepIndex, setActiveStepIndex] = React.useState(0)
 
     const [name, setName] = React.useState("")
@@ -63,14 +63,11 @@ function CreatorUser({setItems}) {
             } else {
                 if (password === repassword) {
                     console.log(exportFunctionToJson())
-                    setItems([{
+                    console.log("LLALALAALALALA")
+                    addNotificationItem({
                         type: "success",
-                        dismissible: true,
-                        dismissLabel: "Dismiss message",
-                        onDismiss: () => setItems([]),
                         content: "Usuario creado correctamente",
-                        id: "message_1"
-                    }]);
+                    });
                     window.location.href = '#';
                 } else {
                     setRePasswordFormFieldError("Las contraseñas introducidas deben ser iguales")

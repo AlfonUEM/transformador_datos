@@ -20,28 +20,31 @@ import Button from "@cloudscape-design/components/button";
 import runTransformerFunction from "../utils/TransformerFunctionsUtils";
 import {CodeView} from "@cloudscape-design/code-view";
 import javascriptHighlight from "@cloudscape-design/code-view/highlight/javascript";
+import {apiCreateFunction} from "../utils/API";
 
 
 const FUNCTION_INITIAL_STR = "function transform(input, parameters){"
 
-function FunctionCreatorSteps({setItems}){
+function FunctionCreatorSteps({addNotificationItem}){
     const [activeStepIndex, setActiveStepIndex] = React.useState(0)
-
     const [temporarySummary, setTemporarySummary] = React.useState("TODO")
-
     const [testOutput, setTestOutput] = React.useState("")
     const [testError, setTestError] = React.useState("")
-
     const [functionName, setFunctionName] = React.useState("")
     const [functionDescription, setFunctionDescription] = React.useState("")
-
     const [functionNameFormFieldError, setFunctionNameFormFieldError] = React.useState("")
     const [functionDescriptionFormFieldError, setFunctionDescriptionFormFieldError] = React.useState("")
-
     const [functionParameters, setFunctionParameters] = React.useState([]);
-
-
     const [changeParameterType, setChangeParameterType] = React.useState(false)
+    const [codeEditorValue, setCodeEditorValue] = React.useState("function transform(input, parameters){\n\n\t// tu código va aquí\n\n}");
+    const [inputEditorValue, setInputEditorValue] = React.useState("//establece el valor de entrada de tu función a continuaciónn\n\nlet input = \"\";");
+    const [codeEditorPreferences, setCodeEditorPreferences] = React.useState({});
+    const [codeEditorReturnsErrors, setCodeEditorReturnsErrors] = React.useState(false);
+    const [inputEditorPreferences, setInputEditorPreferences] = React.useState({});
+    const [codeEditorLoading, setCodeEditorLoading] = React.useState(true);
+    const [inputEditorLoading, setInputEditorLoading] = React.useState(true);
+    const [ace, setAce] = React.useState();
+    const [aceInput, setAceInput] = React.useState();
 
     const InputForParameters = React.memo(({ value, index, placeholder, setFunctionParameters, prop }) => {
         return (
@@ -243,18 +246,6 @@ function FunctionCreatorSteps({setItems}){
         [changeParameterType]
     );
 
-
-
-    const [codeEditorValue, setCodeEditorValue] = React.useState("function transform(input, parameters){\n\n\t// tu código va aquí\n\n}");
-    const [inputEditorValue, setInputEditorValue] = React.useState("//establece el valor de entrada de tu función a continuaciónn\n\nlet input = \"\";");
-    const [codeEditorPreferences, setCodeEditorPreferences] = React.useState({});
-    const [codeEditorReturnsErrors, setCodeEditorReturnsErrors] = React.useState(false);
-    const [inputEditorPreferences, setInputEditorPreferences] = React.useState({});
-    const [codeEditorLoading, setCodeEditorLoading] = React.useState(true);
-    const [inputEditorLoading, setInputEditorLoading] = React.useState(true);
-    const [ace, setAce] = React.useState();
-    const [aceInput, setAceInput] = React.useState();
-
     React.useEffect(() => {
         async function loadAce() {
             const ace = await import('ace-builds');
@@ -318,14 +309,19 @@ function FunctionCreatorSteps({setItems}){
         setTemporarySummary(exportFunctionToJson());
         console.log(exportFunctionToJson());
         console.log(functionParameters);
-        setItems([{
-            type: "success",
-            dismissible: true,
-            dismissLabel: "Dismiss message",
-            onDismiss: () => setItems([]),
-            content: "Función creada correctamente",
-            id: "message_2"
-        }]);
+        apiCreateFunction(functionName, functionDescription, exportFunctionToJson()).then(response =>{
+            if(response.statusCode === 200){
+                addNotificationItem({
+                    type: "success",
+                    content: "Función creada correctamente",
+                });
+            }else{
+                addNotificationItem({
+                    type: "error",
+                    content: "Error al crear función",
+                });
+            }
+        })
     }
 
 

@@ -3,7 +3,7 @@ import FunctionCreatorStepsLayout from "../components/FunctionCreatorStepsLayout
 import FunctionCreatorSteps from "../components/FunctionCreatorSteps";
 
 
-function CreateFunctionPage({items, setItems}) {
+function CreateFunctionPage({notificationItems, addNotificationItem}) {
     return (
         <>
             <FunctionCreatorStepsLayout
@@ -11,8 +11,8 @@ function CreateFunctionPage({items, setItems}) {
                 sectionTitle="Creador de funciones"
                 sectionDescription="Crea una nueva función para ser utilizada en el transformador de datos"
                 sectionContent={<FunctionCreatorSteps />}
-                items={items}
-                setItems={setItems}
+                notificationItems={notificationItems}
+                addNotificationItem={addNotificationItem}
             />
         </>
     );

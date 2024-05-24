@@ -10,11 +10,11 @@ function CreatorUserLayout({
                                sectionTitle,
                                sectionDescription,
                                sectionContent,
-                               items,
-                               setItems,
+                               notificationItems,
+                               addNotificationItem,
                            }) {
 
-    const contentWithProp = React.cloneElement(sectionContent, {setItems});
+    const contentWithProp = React.cloneElement(sectionContent, {addNotificationItem});
 
     return (
         <>
@@ -29,7 +29,7 @@ function CreatorUserLayout({
                     />
                 }
                 navigationHide={true}
-                notifications={<Flashbar items={items}/>}
+                notifications={<Flashbar items={notificationItems}/>}
                 toolsHide={true}
                 content={contentWithProp}
                 disableContentPaddings={false}
