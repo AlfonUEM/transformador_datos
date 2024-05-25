@@ -55,6 +55,11 @@ function CreatorUser({addNotificationItem}) {
         return true;
     }
 
+    function validateEmail (email)  {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+
     const validateSubmit = () => {
         if (user !== "" && password !== "" && repassword !== "" && checked) {
             if (!ValidatePassword(password)) {
@@ -94,7 +99,12 @@ function CreatorUser({addNotificationItem}) {
         switch (activeStepIndex) {
             case 0:
                 if (name !== "" && lastName !== "" && email !== "" && date !== "") {
-                    setActiveStepIndex(requestedStepIndex)
+                    if (!validateEmail(email)) {
+                        setEmailFormFieldError("Debe introducir una dirección de email correcta")
+
+                    } else {
+                        setActiveStepIndex(requestedStepIndex)
+                    }
                     break
                 } else {
                     if (name === "") {
