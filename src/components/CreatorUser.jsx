@@ -74,14 +74,16 @@ function CreatorUser({addNotificationItem}) {
                                 type: "success",
                                 content: "Usuario creada correctamente",
                             });
-                        }else{
+                            window.location.href = '#';
+                        }else if(response.status === 409) {
+                            setUserFormFieldError("Usuario existente, elija otra nombre de usuario")
+                        }else {
                             addNotificationItem({
                                 type: "error",
                                 content: "Error al crear usuario",
                             });
                         }
                     });
-                    window.location.href = '#';
                 } else {
                     setRePasswordFormFieldError("Las contraseñas introducidas deben ser iguales")
                 }
@@ -197,7 +199,7 @@ function CreatorUser({addNotificationItem}) {
         }
         setChecked(value);
     }
-    
+
 
     const [visible, setVisible] = React.useState(false);
 
