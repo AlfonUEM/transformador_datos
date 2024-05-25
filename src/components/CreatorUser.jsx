@@ -68,7 +68,6 @@ function CreatorUser({addNotificationItem}) {
                     " una minúscula, una mayuscula, un número y un símbolo.")
             } else {
                 if (password === repassword) {
-                    console.log(exportFunctionToJson())
                     apiRegisterUser(user,password,name,surname,email,birthdate,phone,country,province).then(response =>{
                         if(response.status === 200){
                             addNotificationItem({
@@ -198,46 +197,7 @@ function CreatorUser({addNotificationItem}) {
         }
         setChecked(value);
     }
-
-    // ejemplo para attibute-editor
-    const [functionParameters, setFunctionParameters] = React.useState([]);
-
-
-    function exportFunctionToJson() {
-
-        let exportedFunctionParameters = {}
-        functionParameters.forEach((parameter) => {
-            if (parameter.type.value === "str") {
-                exportedFunctionParameters[parameter.key] = {
-                    "fieldtype": parameter.type.value,
-                    "value": parameter.value
-                }
-            } else if (parameter.type.value === "int") {
-                exportedFunctionParameters[parameter.key] = {
-                    "fieldtype": parameter.type.value,
-                    "value": Number(parameter.value)
-                }
-            } else if (parameter.type.value === "bool") {
-                exportedFunctionParameters[parameter.key] = {
-                    "fieldtype": parameter.type.value,
-                    "value": parameter.value.value
-                }
-            }
-        })
-
-        const functionObject = {
-            name: name,
-            surname: surname,
-            email: email,
-            birthdate: birthdate,
-            phone: phone,
-            country: country,
-            province: province,
-            user: user,
-            password: password,
-        }
-        return JSON.stringify(functionObject);
-    }
+    
 
     const [visible, setVisible] = React.useState(false);
 
