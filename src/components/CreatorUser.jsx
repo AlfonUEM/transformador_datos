@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     Container, FormField,
     Header, Input, Link,
@@ -14,6 +14,7 @@ import {apiRegisterUser} from "../utils/API";
 
 function CreatorUser({addNotificationItem}) {
     const [activeStepIndex, setActiveStepIndex] = React.useState(0)
+    const [loading, setLoading] = useState(false);
 
     const [name, setName] = React.useState("")
     const [surname, setSurname] = React.useState("")
@@ -68,12 +69,14 @@ function CreatorUser({addNotificationItem}) {
                     " una minúscula, una mayuscula, un número y un símbolo.")
             } else {
                 if (password === repassword) {
+                    setLoading(true)
                     apiRegisterUser(user,password,name,surname,email,birthdate,phone,country,province).then(response =>{
                         if(response.status === 200){
                             addNotificationItem({
                                 type: "success",
                                 content: "Usuario creada correctamente",
                             });
+                            setLoading(false)
                             window.location.href = '#';
                         }else if(response.status === 409) {
                             setUserFormFieldError("Usuario existente, elija otra nombre de usuario")
@@ -83,9 +86,11 @@ function CreatorUser({addNotificationItem}) {
                                 content: "Error al crear usuario",
                             });
                         }
+                        setLoading(false)
                     });
                 } else {
                     setRePasswordFormFieldError("Las contraseñas introducidas deben ser iguales")
+                    setLoading(false)
                 }
             }
         } else {
@@ -228,8 +233,10 @@ function CreatorUser({addNotificationItem}) {
                     previousButton: "Anterior",
                     nextButton: "Siguiente",
                     submitButton: "Crear usuario",
-                    optional: "opcional"
+                    optional: "opcional",
+                    submitButtonLoadingAnnouncement:"Creando usuario"
                 }}
+                isLoadingNextStep={loading}
                 onNavigate={validateNext}
                 activeStepIndex={activeStepIndex}
                 allowSkipTo

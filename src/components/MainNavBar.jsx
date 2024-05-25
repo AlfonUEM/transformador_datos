@@ -1,6 +1,6 @@
 import TopNavigation from "@cloudscape-design/components/top-navigation";
 import React, {useState} from "react";
-import {Box, Button, Modal, FormField, Input} from "@cloudscape-design/components";
+import {Box, Button, Modal, FormField, Input, Spinner} from "@cloudscape-design/components";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import {apiLogin, removeJWTfromLocalStorage, saveJWTinLocalStorage} from "../utils/API";
 
@@ -15,7 +15,7 @@ function MainNavBar({
     const [user, setUser] = React.useState("")
     const [password, setPassword] = React.useState("")
     const [userFormFieldError, setUserFormFieldError] = useState("")
-
+    const [loading, setLoading] = useState(false);
 
 
     const cancelModal = () => {
@@ -23,6 +23,7 @@ function MainNavBar({
     }
     const confirmModal = () => {
         //añadir función que verifique usuario
+        setLoading(true)
         apiLogin(user, password).then(response => {
             if (response.status === 200) {
                 setUserLoggedIn(user)
@@ -31,9 +32,11 @@ function MainNavBar({
                 setUser("")
                 setPassword("")
                 setVisible(false);
+                setLoading(false)
                 window.location.href = '#';
             } else {
                 setUserFormFieldError("Usuario y/o contraseña incorrectos")
+                setLoading(false)
             }
         });
     }
@@ -133,8 +136,9 @@ function MainNavBar({
                 footer={
                     <Box float="right">
                         <SpaceBetween direction="horizontal" size="xs">
-                            <Button variant="link" onClick={cancelModal}>Cancel</Button>
-                            <Button variant="primary" onClick={confirmModal}>Ok</Button>
+                            <Button variant="link" onClick={cancelModal} disabled={loading}>Cancel</Button>
+                            <Button variant="primary" onClick={confirmModal} disabled={loading}>{loading ?
+                                <Spinner/> : 'Ok'}</Button>
                         </SpaceBetween>
                     </Box>
                 }
