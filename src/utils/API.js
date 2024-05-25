@@ -6,13 +6,13 @@ export async function authenticatedPostRequest(path, post_json){
         method: "POST",
         body: JSON.stringify(post_json),
         headers: {
-            "Authorization": "TODO",
+            "Authorization": getJWTfromLocalStorage(),
             "Content-Type": "application/json"
         }
     });
 
     if(response.status === 200 || response.status === 400){
-        return {"status": response.status, "body": response.json()};
+        return {"status": response.status, "body": await response.json()};
     }else{
         return {"status": response.status};
     }
@@ -28,8 +28,8 @@ export async function unauthenticatedPostRequest(path, post_json){
             "Content-Type": "application/json"
         }
     });
-    if(response.status === 200 || response.status === 400){
-        return {"status": response.status, "body": response.json()};
+    if(response.status === 200 || response.status === 400 || response.status === 409){
+        return {"status": response.status, "body": await response.json()};
     }else{
         return {"status": response.status};
     }
@@ -40,12 +40,12 @@ export async function authenticatedGetRequest(path){
     let response = await fetch(url, {
         method: "GET",
         headers: {
-            "Authorization": "TODO",
+            "Authorization": getJWTfromLocalStorage(),
         }
     });
 
     if(response.status === 200 || response.status === 400){
-        return {"status": response.status, "body": response.json()};
+        return {"status": response.status, "body": await response.json()};
     }else{
         return {"status": response.status};
     }

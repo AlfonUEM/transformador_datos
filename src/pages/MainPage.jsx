@@ -1,7 +1,15 @@
 import React from 'react';
 import MainLayout from "../components/MainLayout";
 import Transformer from "../components/Transformer";
-function MainPage({notificationItems,addNotificationItem}){
+
+function MainPage({
+                      notificationItems,
+                      addNotificationItem,
+                      isUserLoggedIn,
+                      setIsUserLoggedIn,
+                      userLoggedIn,
+                      setUserLoggedIn
+                  }) {
     return (
         <>
             <MainLayout
@@ -10,6 +18,10 @@ function MainPage({notificationItems,addNotificationItem}){
                 sectionContent={<Transformer/>}
                 notificationItems={notificationItems}
                 addNotificationItem={addNotificationItem}
+                isUserLoggedIn={isUserLoggedIn}
+                setIsUserLoggedIn={setIsUserLoggedIn}
+                userLoggedIn={userLoggedIn}
+                setUserLoggedIn={setUserLoggedIn}
             />
         </>
     );

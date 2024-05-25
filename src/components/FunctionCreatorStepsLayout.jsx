@@ -19,13 +19,20 @@ function FunctionCreatorStepsLayout({
                                         sectionContent,
                                         notificationItems,
                                         addNotificationItem,
+                                        isUserLoggedIn,
+                                        setIsUserLoggedIn,
+                                        userLoggedIn,
+                                        setUserLoggedIn
                                     }) {
 
     const contentWithProp = React.cloneElement(sectionContent, {addNotificationItem});
 
     return (
         <>
-            <MainNavBar/>
+            <MainNavBar isUserLoggedIn={isUserLoggedIn}
+                        setIsUserLoggedIn={setIsUserLoggedIn}
+                        userLoggedIn={userLoggedIn}
+                        setUserLoggedIn={setUserLoggedIn}/>
             <AppLayout
                 breadcrumbs={
                     <BreadcrumbGroup

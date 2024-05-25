@@ -18,11 +18,18 @@ function MainLayout({
                         sectionDescription,
                         sectionContent,
                         notificationItems,
-                        addNotificationItem
+                        addNotificationItem,
+                        isUserLoggedIn,
+                        setIsUserLoggedIn,
+                        userLoggedIn,
+                        setUserLoggedIn
                     }) {
     return (
         <>
-            <MainNavBar/>
+            <MainNavBar isUserLoggedIn={isUserLoggedIn}
+                        setIsUserLoggedIn={setIsUserLoggedIn}
+                        userLoggedIn={userLoggedIn}
+                        setUserLoggedIn={setUserLoggedIn}/>
             <AppLayout
                 breadcrumbs={
                     <BreadcrumbGroup

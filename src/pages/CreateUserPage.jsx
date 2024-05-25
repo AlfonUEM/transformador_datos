@@ -4,7 +4,14 @@ import CreatorUserLayout from "../components/CreatorUserLayout";
 import CreatorUser from "../components/CreatorUser";
 
 
-function CreateUserPage({notificationItems, addNotificationItem}) {
+function CreateUserPage({
+                            notificationItems,
+                            addNotificationItem,
+                            isUserLoggedIn,
+                            setIsUserLoggedIn,
+                            userLoggedIn,
+                            setUserLoggedIn
+                        }) {
     return (
         <>
             <CreatorUserLayout
@@ -13,6 +20,10 @@ function CreateUserPage({notificationItems, addNotificationItem}) {
                 sectionContent={<CreatorUser/>}
                 notificationItems={notificationItems}
                 addNotificationItem={addNotificationItem}
+                isUserLoggedIn={isUserLoggedIn}
+                setIsUserLoggedIn={setIsUserLoggedIn}
+                userLoggedIn={userLoggedIn}
+                setUserLoggedIn={setUserLoggedIn}
             />
         </>
     );

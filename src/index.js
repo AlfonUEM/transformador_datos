@@ -6,24 +6,25 @@ import MainPage from "./pages/MainPage";
 import {HashRouter, Routes, Route} from "react-router-dom";
 import CreateFunctionPage from "./pages/CreateFunctionPage";
 import CreateUserPage from "./pages/CreateUserPage";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 
 const App = () => {
     const [notificationItems, setNotificationItems] = React.useState([]);
     const [isUserLoggedIn, setIsUserLoggedIn] = React.useState(false);
-    const [userLoggedIn, setUserLoggedIn] = React.useState(false);
+    const [userLoggedIn, setUserLoggedIn] = React.useState("Sin conectar");
 
 
-
-    function addNotificationItem(item){
+    function addNotificationItem(item) {
         const notificationId = uuidv4()
-        let itemWithCancel = {...item,
-                                        dismissible: true,
-                                        onDismiss:() => setNotificationItems(items =>
-                                            items.filter(item => item.id !== notificationId)
-                                        ),
-                                        dismissLabel: "Cerrar",
-                                        id: notificationId}
+        let itemWithCancel = {
+            ...item,
+            dismissible: true,
+            onDismiss: () => setNotificationItems(items =>
+                items.filter(item => item.id !== notificationId)
+            ),
+            dismissLabel: "Cerrar",
+            id: notificationId
+        }
         setNotificationItems(oldArray => [...oldArray, itemWithCancel]);
     }
 
@@ -31,9 +32,24 @@ const App = () => {
         <React.StrictMode>
             <HashRouter>
                 <Routes>
-                    <Route path="createFunction" element={<CreateFunctionPage notificationItems={notificationItems} addNotificationItem={addNotificationItem}/>}/>
-                    <Route path="createUser" element={<CreateUserPage notificationItems={notificationItems} addNotificationItem={addNotificationItem}/>}/>
-                    <Route path="/" element={<MainPage notificationItems={notificationItems} addNotificationItem={addNotificationItem}/>}/>
+                    <Route path="createFunction" element={<CreateFunctionPage notificationItems={notificationItems}
+                                                                              addNotificationItem={addNotificationItem}
+                                                                              isUserLoggedIn={isUserLoggedIn}
+                                                                              setIsUserLoggedIn={setIsUserLoggedIn}
+                                                                              userLoggedIn={userLoggedIn}
+                                                                              setUserLoggedIn={setUserLoggedIn}/>}/>
+                    <Route path="createUser" element={<CreateUserPage notificationItems={notificationItems}
+                                                                      addNotificationItem={addNotificationItem}
+                                                                      isUserLoggedIn={isUserLoggedIn}
+                                                                      setIsUserLoggedIn={setIsUserLoggedIn}
+                                                                      userLoggedIn={userLoggedIn}
+                                                                      setUserLoggedIn={setUserLoggedIn}/>}/>
+                    <Route path="/" element={<MainPage notificationItems={notificationItems}
+                                                       addNotificationItem={addNotificationItem}
+                                                       isUserLoggedIn={isUserLoggedIn}
+                                                       setIsUserLoggedIn={setIsUserLoggedIn}
+                                                       userLoggedIn={userLoggedIn}
+                                                       setUserLoggedIn={setUserLoggedIn}/>}/>
                 </Routes>
             </HashRouter>
         </React.StrictMode>
