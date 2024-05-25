@@ -4,35 +4,34 @@ export async function authenticatedPostRequest(path, post_json){
     const url = "http://" + serverAddress + path;
     let response = await fetch(url, {
         method: "POST",
-        body: post_json,
+        body: JSON.stringify(post_json),
         headers: {
             "Authorization": "TODO",
             "Content-Type": "application/json"
         }
     });
 
-    if(response.statusCode === 200 || response.statusCode === 400){
-        return {"statusCode": response.statusCode, "body": response.json()};
+    if(response.status === 200 || response.status === 400){
+        return {"status": response.status, "body": response.json()};
     }else{
-        return {"statusCode": response.statusCode};
+        return {"status": response.status};
     }
 }
 
 
 export async function unauthenticatedPostRequest(path, post_json){
-    const url = serverAddress + path;
+    const url = "http://" + serverAddress + path;
     let response = await fetch(url, {
         method: "POST",
-        body: post_json,
+        body:  JSON.stringify(post_json),
         headers: {
             "Content-Type": "application/json"
         }
     });
-
-    if(response.statusCode === 200 || response.statusCode === 400){
-        return {"statusCode": response.statusCode, "body": response.json()};
+    if(response.status === 200 || response.status === 400){
+        return {"status": response.status, "body": response.json()};
     }else{
-        return {"statusCode": response.statusCode};
+        return {"status": response.status};
     }
 }
 
@@ -45,10 +44,10 @@ export async function authenticatedGetRequest(path){
         }
     });
 
-    if(response.statusCode === 200 || response.statusCode === 400){
-        return {"statusCode": response.statusCode, "body": response.json()};
+    if(response.status === 200 || response.status === 400){
+        return {"status": response.status, "body": response.json()};
     }else{
-        return {"statusCode": response.statusCode};
+        return {"status": response.status};
     }
 }
 

@@ -9,27 +9,28 @@ import {
 } from "@cloudscape-design/components";
 import Wizard from "@cloudscape-design/components/wizard";
 import SpaceBetween from "@cloudscape-design/components/space-between";
+import {apiRegisterUser} from "../utils/API";
 
 
 function CreatorUser({addNotificationItem}) {
     const [activeStepIndex, setActiveStepIndex] = React.useState(0)
 
     const [name, setName] = React.useState("")
-    const [lastName, setLastName] = React.useState("")
+    const [surname, setSurname] = React.useState("")
     const [email, setEmail] = React.useState("")
-    const [date, setDate] = React.useState("");
-    const [telefono, setTelefono] = React.useState("");
-    const [pais, setPais] = React.useState("");
-    const [provincia, setProvincia] = React.useState("");
+    const [birthdate, setBirthdate] = React.useState("");
+    const [phone, setPhone] = React.useState("");
+    const [country, setCountry] = React.useState("");
+    const [province, setProvince] = React.useState("");
     const [user, setUser] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [repassword, setRePassword] = React.useState("");
     const [checked, setChecked] = React.useState(false);
 
     const [nameFormFieldError, setNameFormFieldError] = React.useState("")
-    const [lastNameFormFieldError, setLastNameFormFieldError] = React.useState("")
+    const [surnameFormFieldError, setSurnameFormFieldError] = React.useState("")
     const [emailFormFieldError, setEmailFormFieldError] = React.useState("")
-    const [dateFormFieldError, setDateFormFieldError] = React.useState("")
+    const [birthdateFormFieldError, setBirthdateFormFieldError] = React.useState("")
     const [userFormFieldError, setUserFormFieldError] = React.useState("");
     const [passwordFormFieldError, setPasswordFormFieldError] = React.useState("");
     const [repasswordFormFieldError, setRePasswordFormFieldError] = React.useState("");
@@ -68,10 +69,18 @@ function CreatorUser({addNotificationItem}) {
             } else {
                 if (password === repassword) {
                     console.log(exportFunctionToJson())
-                    console.log("LLALALAALALALA")
-                    addNotificationItem({
-                        type: "success",
-                        content: "Usuario creado correctamente",
+                    apiRegisterUser(user,password,name,surname,email,birthdate,phone,country,province).then(response =>{
+                        if(response.status === 200){
+                            addNotificationItem({
+                                type: "success",
+                                content: "Usuario creada correctamente",
+                            });
+                        }else{
+                            addNotificationItem({
+                                type: "error",
+                                content: "Error al crear usuario",
+                            });
+                        }
                     });
                     window.location.href = '#';
                 } else {
@@ -98,7 +107,7 @@ function CreatorUser({addNotificationItem}) {
         const requestedStepIndex = event.detail.requestedStepIndex;
         switch (activeStepIndex) {
             case 0:
-                if (name !== "" && lastName !== "" && email !== "" && date !== "") {
+                if (name !== "" && surname !== "" && email !== "" && birthdate !== "") {
                     if (!validateEmail(email)) {
                         setEmailFormFieldError("Debe introducir una dirección de email correcta")
 
@@ -110,14 +119,14 @@ function CreatorUser({addNotificationItem}) {
                     if (name === "") {
                         setNameFormFieldError("El nombre no puede estar vacío")
                     }
-                    if (lastName === "") {
-                        setLastNameFormFieldError("Los apellidos no pueden estar vacíos")
+                    if (surname === "") {
+                        setSurnameFormFieldError("Los apellidos no pueden estar vacíos")
                     }
                     if (email === "") {
                         setEmailFormFieldError("El email no puede estar vacío")
                     }
-                    if (date === "") {
-                        setDateFormFieldError("La fecha no puede estar vacía")
+                    if (birthdate === "") {
+                        setBirthdateFormFieldError("La fecha no puede estar vacía")
                     }
                     break
                 }
@@ -141,11 +150,11 @@ function CreatorUser({addNotificationItem}) {
         setName(value);
     }
 
-    function validatedSetLastName(value) {
+    function validatedSetSurname(value) {
         if (value !== "") {
-            setLastNameFormFieldError("");
+            setSurnameFormFieldError("");
         }
-        setLastName(value);
+        setSurname(value);
     }
 
     function validatedSetEmail(value) {
@@ -155,11 +164,11 @@ function CreatorUser({addNotificationItem}) {
         setEmail(value);
     }
 
-    function validatedSetDate(value) {
+    function validatedSetBirthdate(value) {
         if (value !== "") {
-            setDateFormFieldError("");
+            setBirthdateFormFieldError("");
         }
-        setDate(value);
+        setBirthdate(value);
     }
 
     function validatedSetUser(value) {
@@ -218,12 +227,12 @@ function CreatorUser({addNotificationItem}) {
 
         const functionObject = {
             name: name,
-            lastName: lastName,
+            surname: surname,
             email: email,
-            date: date,
-            telefono: telefono,
-            pais: pais,
-            provincia: provincia,
+            birthdate: birthdate,
+            phone: phone,
+            country: country,
+            province: province,
             user: user,
             password: password,
         }
@@ -289,20 +298,20 @@ function CreatorUser({addNotificationItem}) {
                                                value={name}
                                                onChange={({detail}) => validatedSetName(detail.value)}/>
                                     </FormField>
-                                    <FormField label="Apellidos" errorText={lastNameFormFieldError}>
+                                    <FormField label="Apellidos" errorText={surnameFormFieldError}>
                                         <Input type="text"
-                                               value={lastName}
-                                               onChange={({detail}) => validatedSetLastName(detail.value)}/>
+                                               value={surname}
+                                               onChange={({detail}) => validatedSetSurname(detail.value)}/>
                                     </FormField>
                                     <FormField label="Email" errorText={emailFormFieldError}>
                                         <Input type="email"
                                                value={email}
                                                onChange={({detail}) => validatedSetEmail(detail.value)}/>
                                     </FormField>
-                                    <FormField label="Fecha de nacimiento" errorText={dateFormFieldError}>
+                                    <FormField label="Fecha de nacimiento" errorText={birthdateFormFieldError}>
                                         <DatePicker
-                                            onChange={({detail}) => validatedSetDate(detail.value)}
-                                            value={date}
+                                            onChange={({detail}) => validatedSetBirthdate(detail.value)}
+                                            value={birthdate}
                                             openCalendarAriaLabel={selectedDate =>
                                                 "Choose certificate expiry date" +
                                                 (selectedDate
@@ -340,18 +349,18 @@ function CreatorUser({addNotificationItem}) {
                                 <SpaceBetween direction="vertical" size="s">
                                     <FormField label="Número de teléfono">
                                         <Input type="number"
-                                               value={telefono}
-                                               onChange={({detail}) => setTelefono(detail.value)}/>
+                                               value={phone}
+                                               onChange={({detail}) => setPhone(detail.value)}/>
                                     </FormField>
                                     <FormField label="Pais de residencia">
                                         <Input type="text"
-                                               value={pais}
-                                               onChange={({detail}) => setPais(detail.value)}/>
+                                               value={country}
+                                               onChange={({detail}) => setCountry(detail.value)}/>
                                     </FormField>
                                     <FormField label="Provincia">
                                         <Input type="text"
-                                               value={provincia}
-                                               onChange={({detail}) => setProvincia(detail.value)}/>
+                                               value={province}
+                                               onChange={({detail}) => setProvince(detail.value)}/>
                                     </FormField>
                                 </SpaceBetween>
                             </Container>
