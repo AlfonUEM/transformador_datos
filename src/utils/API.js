@@ -36,14 +36,13 @@ export async function unauthenticatedPostRequest(path, post_json){
 }
 
 export async function authenticatedGetRequest(path){
-    const url = serverAddress + path;
+    const url = "http://" + serverAddress + path;
     let response = await fetch(url, {
         method: "GET",
         headers: {
             "Authorization": getJWTfromLocalStorage(),
         }
     });
-
     if(response.status === 200 || response.status === 400){
         return {"status": response.status, "body": await response.json()};
     }else{
@@ -85,12 +84,12 @@ export async function apiCreateCombination(name, jsonEncodedCombination){
     return res;
 }
 
-export async function apiGetCombinations(name, jsonEncodedCombination){
+export async function apiGetCombinations(){
     let res = await authenticatedGetRequest("/combinations")
     return res;
 }
 
-export async function apiGetFunctions(name, jsonEncodedCombination){
+export async function apiGetFunctions(){
     let res = await authenticatedGetRequest("/functions")
     return res;
 }

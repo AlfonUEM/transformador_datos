@@ -15,7 +15,9 @@ function MainPage({
             <MainLayout
                 sectionTitle="Transformador de datos"
                 sectionDescription="Aplica todas las transformaciones que quieras a tu entrada para obtener una salida"
-                sectionContent={<Transformer/>}
+                sectionContent={<Transformer isUserLoggedIn={isUserLoggedIn}
+                                             setIsUserLoggedIn={setIsUserLoggedIn}
+                                             addNotificationItem={addNotificationItem}/>}
                 notificationItems={notificationItems}
                 addNotificationItem={addNotificationItem}
                 isUserLoggedIn={isUserLoggedIn}

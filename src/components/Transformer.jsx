@@ -18,8 +18,10 @@ import { v4 as uuidv4 } from 'uuid';
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { CodeView } from "@cloudscape-design/code-view";
 import Button from "@cloudscape-design/components/button";
+import Spinner from "@cloudscape-design/components/spinner";
+import {apiCreateFunction, apiGetFunctions} from "../utils/API";
 
-function Transformer(){
+function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
     const [transformationOutput, setTransformationOutput] = React.useState("");
     const [transformationError, setTransformationError] = React.useState("");
     const [inputValue, setInputValue] = React.useState("");
@@ -29,6 +31,7 @@ function Transformer(){
     const [saveCombinationName, setSaveCombinationName] = React.useState("");
     const [loadCombinationName, setLoadCombinationName] = React.useState({});
     const [debugEnabled, setDebugEnabled] = React.useState(false)
+    const [privateFunctionsColumnInstructions, setPrivateFunctionsColumnInstructions] = React.useState(<p>Inicie sesión para cargar sus funciones privadas</p>);
     const onDragEnd = result => {
         const { destination, source, draggableId } = result;
 
@@ -152,6 +155,91 @@ function Transformer(){
 
     }
 
+    React.useEffect(() => {
+        refreshUserFunctions();
+    }, [isUserLoggedIn]);
+
+    function refreshUserFunctions(){
+        if(isUserLoggedIn) {
+            setPrivateFunctionsColumnInstructions(<Spinner/>);
+            setTimeout(function() {
+                apiGetFunctions().then(response => {
+                    console.log(response)
+                    if (response.status === 200) {
+                        let returnedFunctions = [];
+                        response.body.content.forEach(entry => {
+                            returnedFunctions.push(JSON.parse(entry[3]));
+                        });
+                        updatePrivateFunctions(returnedFunctions);
+
+                    } else if (response.status === 403) {
+                        setIsUserLoggedIn(false);
+                    } else {
+                        addNotificationItem({
+                            type: "error",
+                            content: "Error al obtener las funciones privadas del usuario",
+                        });
+                    }
+                    setPrivateFunctionsColumnInstructions(<div></div>)
+                });
+            }, 2000); // we need some time to write the JWT in window.session, read it, etc, or it leads to a 403
+        }else{
+            updatePrivateFunctions([]);
+            setPrivateFunctionsColumnInstructions(<p>Inicie sesión para cargar sus funciones privadas</p>);
+        }
+    }
+
+    function updatePrivateFunctions(newFunctions){
+        let updatedPrivateColumnFunctionIds = [];
+        let publicFunctionIds = [];
+        let updatedAvailableFunctions= {};
+        let updatedActiveFunctions = {};
+        let updatedActiveFunctionsColumn=[];
+        let updatedDNDstate = {}
+        for (let fId in dndState.availableFunctions){
+            if(dndState.availableFunctions[fId].visibility === "public"){
+                updatedAvailableFunctions[fId] = {...dndState.availableFunctions[fId]}
+                publicFunctionIds.push(fId);
+            }
+        }
+        for (let fId in dndState.activeFunctions){
+            if(dndState.activeFunctions[fId].visibility === "public"){
+                updatedActiveFunctions[fId] = {...dndState.activeFunctions[fId]}
+            }
+        }
+
+        updatedActiveFunctionsColumn = [...dndState.columns["active_functions_column"].functionIds];
+
+        dndState.columns["active_functions_column"].functionIds.forEach(fId => {
+            if(!publicFunctionIds.includes(fId)){
+                updatedActiveFunctionsColumn = updatedActiveFunctionsColumn.filter(id => id !== fId)
+            }
+        })
+
+        newFunctions.forEach(newFunction => {
+            let newUUID = uuidv4();
+            updatedAvailableFunctions[newUUID] = {
+                id: newUUID,
+                content: newFunction.name,
+                visibility: "private",
+                jsCode: newFunction.jsCode,
+                jsParameters: newFunction.jsParameters
+            }
+            updatedPrivateColumnFunctionIds.push(newUUID);
+        })
+
+        updatedDNDstate = {availableFunctions: updatedAvailableFunctions,
+                            activeFunctions: updatedActiveFunctions,
+                            columns: {...dndState.columns}}
+        updatedDNDstate.columns["private_functions_column"].functionIds = updatedPrivateColumnFunctionIds;
+        updatedDNDstate.columns["active_functions_column"].functionIds = updatedActiveFunctionsColumn;
+        console.log(updatedDNDstate);
+        setDndState(updatedDNDstate);
+    }
+
+
+
+
     function openLoadActiveFunctionsModal(){
         setModalLoadActiveFunctionsVisible(true);
     }
@@ -204,6 +292,7 @@ function Transformer(){
                                     updateFunctionParameters={updateFunctionParameters}
                                     openSaveActiveFunctionsModal={openSaveActiveFunctionsModal}
                                     openLoadActiveFunctionsModal={openLoadActiveFunctionsModal}
+                                    privateFunctionsColumnInstructions={privateFunctionsColumnInstructions}
                         />
                         <DNDColumn
                             key={dndState.columns["private_functions_column"].id}
@@ -214,6 +303,7 @@ function Transformer(){
                             updateFunctionParameters={updateFunctionParameters}
                             openSaveActiveFunctionsModal={openSaveActiveFunctionsModal}
                             openLoadActiveFunctionsModal={openLoadActiveFunctionsModal}
+                            privateFunctionsColumnInstructions={privateFunctionsColumnInstructions}
                         />
                         </SpaceBetween>
                     </div>
@@ -227,6 +317,7 @@ function Transformer(){
                             updateFunctionParameters={updateFunctionParameters}
                             openSaveActiveFunctionsModal={openSaveActiveFunctionsModal}
                             openLoadActiveFunctionsModal={openLoadActiveFunctionsModal}
+                            privateFunctionsColumnInstructions={privateFunctionsColumnInstructions}
                         />
                     </div>
                     </Grid>

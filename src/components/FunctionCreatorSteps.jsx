@@ -45,6 +45,7 @@ function FunctionCreatorSteps({addNotificationItem}){
     const [inputEditorLoading, setInputEditorLoading] = React.useState(true);
     const [ace, setAce] = React.useState();
     const [aceInput, setAceInput] = React.useState();
+    const [submitLoading, setSubmitLoading] = React.useState(false);
 
     const InputForParameters = React.memo(({ value, index, placeholder, setFunctionParameters, prop }) => {
         return (
@@ -306,22 +307,28 @@ function FunctionCreatorSteps({addNotificationItem}){
     }
 
     function clickSubmit() {
+        setSubmitLoading(true);
         setTemporarySummary(exportFunctionToJson());
         console.log(exportFunctionToJson());
         console.log(functionParameters);
         apiCreateFunction(functionName, functionDescription, exportFunctionToJson()).then(response =>{
-            if(response.statusCode === 200){
+            console.log(response)
+            if(response.status === 200){
                 addNotificationItem({
                     type: "success",
                     content: "Función creada correctamente",
                 });
+                setSubmitLoading(false);
+                window.location.href = '#';
             }else{
                 addNotificationItem({
                     type: "error",
                     content: "Error al crear función",
                 });
+                setSubmitLoading(false);
             }
-        })
+        });
+
     }
 
 
@@ -348,6 +355,7 @@ function FunctionCreatorSteps({addNotificationItem}){
     React.useEffect(() => {
         transformDataTest();
     }, [inputEditorValue]);
+
 
     function transformDataTest(){
         const [errorProcessingInput, outputProcessingInput] = getTestInput(inputEditorValue);
@@ -442,12 +450,14 @@ function FunctionCreatorSteps({addNotificationItem}){
                 previousButton: "Anterior",
                 nextButton: "Siguiente",
                 submitButton: "Crear función",
-                optional: "opcional"
+                optional: "opcional",
+                submitButtonLoadingAnnouncement:"Creando función"
             }}
             onNavigate={(event) => validateNextStep(event)}
             activeStepIndex={activeStepIndex}
             allowSkipTo
             onSubmit={clickSubmit}
+            isLoadingNextStep={submitLoading}
             steps={[
                 {
                     title: "Datos básicos",
