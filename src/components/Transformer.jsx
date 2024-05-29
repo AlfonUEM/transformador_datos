@@ -19,7 +19,7 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import { CodeView } from "@cloudscape-design/code-view";
 import Button from "@cloudscape-design/components/button";
 import Spinner from "@cloudscape-design/components/spinner";
-import {apiCreateFunction, apiGetFunctions} from "../utils/API";
+import {apiCreateCombination, apiCreateFunction, apiGetFunctions} from "../utils/API";
 
 function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
     const [transformationOutput, setTransformationOutput] = React.useState("");
@@ -32,6 +32,8 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
     const [loadCombinationName, setLoadCombinationName] = React.useState({});
     const [debugEnabled, setDebugEnabled] = React.useState(false)
     const [privateFunctionsColumnInstructions, setPrivateFunctionsColumnInstructions] = React.useState(<p>Inicie sesión para cargar sus funciones privadas</p>);
+    const [saveCombinationLoadingButtons, setSaveCombinationLoadingButtons] = React.useState(false);
+
     const onDragEnd = result => {
         const { destination, source, draggableId } = result;
 
@@ -148,11 +150,35 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
     }
 
     function saveActiveFunctions(){
-        console.log("TODO: save the current active functions as " + saveCombinationName);
-        console.log(JSON.stringify(dndState.activeFunctions));
-        setSaveCombinationName("")
-        setModalSaveActiveFunctionsVisible(false);
 
+        setSaveCombinationLoadingButtons(true);
+
+        apiCreateCombination(saveCombinationName,
+                            JSON.stringify({"activeFunctions": dndState.activeFunctions,
+                                "activeColumnFunctionIds":dndState.columns["active_functions_column"].functionIds})
+            ).then(response => {
+
+                if (response.status === 200) {
+                    setSaveCombinationName("")
+                    setModalSaveActiveFunctionsVisible(false);
+                    setSaveCombinationLoadingButtons(false);
+                    addNotificationItem({
+                        type: "success",
+                        content: "Combinación de funciones guardada correctamente.",
+                    });
+
+                } else if (response.status === 403) {
+                    setSaveCombinationLoadingButtons(false);
+                    setIsUserLoggedIn(false);
+                } else {
+                    setSaveCombinationLoadingButtons(false);
+                    addNotificationItem({
+                        type: "error",
+                        content: "Error al guardar la combinación de funciones.",
+                    });
+                }
+            }
+        )
     }
 
     React.useEffect(() => {
@@ -196,12 +222,14 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
         let updatedActiveFunctions = {};
         let updatedActiveFunctionsColumn=[];
         let updatedDNDstate = {}
+
         for (let fId in dndState.availableFunctions){
             if(dndState.availableFunctions[fId].visibility === "public"){
                 updatedAvailableFunctions[fId] = {...dndState.availableFunctions[fId]}
                 publicFunctionIds.push(fId);
             }
         }
+
         for (let fId in dndState.activeFunctions){
             if(dndState.activeFunctions[fId].visibility === "public"){
                 updatedActiveFunctions[fId] = {...dndState.activeFunctions[fId]}
@@ -230,10 +258,10 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
 
         updatedDNDstate = {availableFunctions: updatedAvailableFunctions,
                             activeFunctions: updatedActiveFunctions,
-                            columns: {...dndState.columns}}
+                            columns: structuredClone(dndState.columns)}
+
         updatedDNDstate.columns["private_functions_column"].functionIds = updatedPrivateColumnFunctionIds;
         updatedDNDstate.columns["active_functions_column"].functionIds = updatedActiveFunctionsColumn;
-        console.log(updatedDNDstate);
         setDndState(updatedDNDstate);
     }
 
@@ -382,8 +410,8 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
             footer={
                 <Box float="right">
                     <SpaceBetween direction="horizontal" size="xs">
-                        <Button variant="secondary" onClick={() => setModalSaveActiveFunctionsVisible(false)}>Cancelar</Button>
-                        <Button variant="primary" onClick={()=> saveActiveFunctions()}>Guardar</Button>
+                        <Button variant="secondary" onClick={() => setModalSaveActiveFunctionsVisible(false)} loading={saveCombinationLoadingButtons}>Cancelar</Button>
+                        <Button variant="primary" onClick={()=> saveActiveFunctions()} loading={saveCombinationLoadingButtons}>Guardar</Button>
                     </SpaceBetween>
                 </Box>
             }

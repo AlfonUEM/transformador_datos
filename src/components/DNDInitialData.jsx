@@ -4,10 +4,6 @@ const initialData = {
         'task-2': { id: 'task-2', content: 'To Upper Case', visibility: 'public', jsCode: 'function transform(input, parameters){return input.toUpperCase()}', jsParameters: {}},
         'task-3': { id: 'task-3', content: 'Devuelve parámetro', visibility: 'public', jsCode: 'function transform(input, parameters){return parameters.testfield}', jsParameters: {"testfield":{"fieldtype":"str", "value":"TEST111"}, "testfield2":{"fieldtype":"str", "value":"TEST222"}}},
         'task-4': { id: 'task-4', content: '3Parametros', visibility: 'public', jsCode: "function transform(input, parameters){\n\n\t// tu código va aquí\n\treturn parameters[\"ParamStr\"] + \" \" + parameters[\"ParamInt\"] + \" \" + parameters[\"ParamBool\"];\n\n}", jsParameters: {"ParamStr":{"fieldtype":"str","value":"lala"},"ParamInt":{"fieldtype":"int","value":13},"ParamBool":{"fieldtype":"bool","value":true}} },
-        'task-5': { id: 'task-5', content: 'EEEEE', visibility: 'private', jsCode: '', jsParameters: '' },
-        'task-6': { id: 'task-6', content: 'FFFFFF', visibility: 'private', jsCode: '', jsParameters: '' },
-        'task-7': { id: 'task-7', content: 'GGGGG', visibility: 'private', jsCode: '', jsParameters: '' },
-        'task-8': { id: 'task-8', content: 'HHHHHH', visibility: 'private', jsCode: '', jsParameters: '' },
     },
     activeFunctions: {
     },
@@ -20,7 +16,7 @@ const initialData = {
         'private_functions_column': {
             id: 'private_functions_column',
             title: 'Funciones privadas',
-            functionIds: ['task-5', 'task-6', 'task-7', 'task-8'],
+            functionIds: [],
         },
         'active_functions_column': {
             id: 'active_functions_column',
