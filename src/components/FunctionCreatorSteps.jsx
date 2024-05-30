@@ -2,7 +2,7 @@ import React from 'react';
 import {
     CodeEditor,
     ColumnLayout,
-    Container, CopyToClipboard, FormField,
+    Container, FormField,
     Header, Input, Link, Select, Table,
 } from "@cloudscape-design/components";
 import Box from "@cloudscape-design/components/box";
@@ -16,7 +16,6 @@ import 'ace-builds/css/theme/cloud_editor_dark.css';
 
 
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import Button from "@cloudscape-design/components/button";
 import runTransformerFunction from "../utils/TransformerFunctionsUtils";
 import {CodeView} from "@cloudscape-design/code-view";
 import javascriptHighlight from "@cloudscape-design/code-view/highlight/javascript";
@@ -219,7 +218,6 @@ function FunctionCreatorSteps({addNotificationItem}){
                         refreshFieldTypes={true}
                     />
                 ),
-                //errorText: item => (item.key && item.key.match(/^AWS/i) ? 'Key cannot start with "AWS"' : null),
             },
             {
                 label: "Valor por defecto",
@@ -264,16 +262,13 @@ function FunctionCreatorSteps({addNotificationItem}){
         loadingState: 'Cargando editor de código',
         errorState: 'Hubo un problema cargando el editor de código.',
         errorStateRecovery: 'Reintentar',
-
         editorGroupAriaLabel: 'Editor de código',
         statusBarGroupAriaLabel: 'Barra de estado',
         cursorPosition: (row, column) => `Línea ${row}, Columna ${column}`,
         errorsTab: 'Errores',
         warningsTab: 'Warnings',
         preferencesButtonAriaLabel: 'preferencias',
-
         paneCloseButtonAriaLabel: 'Cerrar',
-
         preferencesModalHeader: 'Preferencias',
         preferencesModalCancel: 'Cancelar',
         preferencesModalConfirm: 'Confirmar',
@@ -285,7 +280,6 @@ function FunctionCreatorSteps({addNotificationItem}){
 
 
     function exportFunctionToJson(){
-
         let exportedFunctionParameters = {}
         functionParameters.forEach((parameter) =>{
            if(parameter.type.value === "str"){
@@ -375,9 +369,7 @@ function FunctionCreatorSteps({addNotificationItem}){
                 setTestError("");
                 setTestOutput(outputFromFunction);
             }
-
         }
-
     }
 
     const validateNextStep = (event) => {
@@ -406,11 +398,20 @@ function FunctionCreatorSteps({addNotificationItem}){
                 if(!codeEditorReturnsErrors) {
                     transformDataTest();
                     setActiveStepIndex(requestedStepIndex)
+                }else{
+                    addNotificationItem({
+                        type: "error",
+                        content: "El código es inválido. Corríjalo antes de continuar.",
+                    });
                 }
                 break
             case 3:
-                if(testError === "") {
-                    setActiveStepIndex(requestedStepIndex)
+                setActiveStepIndex(requestedStepIndex)
+                if(testError !== "") {
+                    addNotificationItem({
+                        type: "warning",
+                        content: "Tenga en cuenta que su función resultó en una excepción en la última prueba que usted realizó",
+                    });
                 }
                 break
             case 4:
@@ -512,25 +513,70 @@ function FunctionCreatorSteps({addNotificationItem}){
                     title: "Código de la función",
                     description: "El código de su función transformadora",
                     content: (
-                        <Container header={<Header variant="h2">Código de la función</Header>}>
-                            <CodeEditor
-                                ace={ace}
-                                value={codeEditorValue}
-                                language="javascript"
-                                onChange={event => modifyCode(event.detail.value)}
-                                preferences={codeEditorPreferences}
-                                onPreferencesChange={event => setCodeEditorPreferences(event.detail)}
-                                loading={codeEditorLoading}
-                                i18nStrings={codeEditorI18nStrings}
-                                themes={{ light: ['cloud_editor'], dark: ['cloud_editor_dark'] }}
-                                onValidate={event => {
-                                                if(event.detail.annotations.length > 0){
-                                                    setCodeEditorReturnsErrors(true)
-                                                }else{
-                                                    setCodeEditorReturnsErrors(false)} }
-                                                }
+                        <SpaceBetween size="m">
+
+                            <Table
+                                columnDefinitions={[
+                                    {
+                                        id: "paramName",
+                                        header: "Nombre",
+                                        cell: item => item.key,
+                                    },
+                                    {
+                                        id: "paramType",
+                                        header: "Tipo de dato",
+                                        cell: item => item.type.label,
+
+                                    },
+                                    {
+                                        id: "paramDefaultValue",
+                                        header: "Valor por defecto",
+                                        cell: item => item.type.value === "bool" ? translate_boolean(item.value.value) : item.value,
+                                    },
+                                    {
+                                        id: "paramAccessCode",
+                                        header: "Acceso desde código",
+                                        cell: item => 'parameters["' + item.key + '"]',
+                                    },
+
+                                ]}
+                                enableKeyboardNavigation
+                                items={functionParameters}
+                                loadingText="Cargando"
+                                sortingDisabled
+                                empty={
+                                    <Box
+                                        margin={{ vertical: "xs" }}
+                                        textAlign="center"
+                                        color="inherit"
+                                    >
+                                        <b>La función no tiene parametros definidos</b>
+                                    </Box>
+                                }
+                                header={<Header variant="h2">Parámetros</Header>}
                             />
-                        </Container>
+
+                            <Container header={<Header variant="h2">Código de la función</Header>}>
+                                <CodeEditor
+                                    ace={ace}
+                                    value={codeEditorValue}
+                                    language="javascript"
+                                    onChange={event => modifyCode(event.detail.value)}
+                                    preferences={codeEditorPreferences}
+                                    onPreferencesChange={event => setCodeEditorPreferences(event.detail)}
+                                    loading={codeEditorLoading}
+                                    i18nStrings={codeEditorI18nStrings}
+                                    themes={{ light: ['cloud_editor'], dark: ['cloud_editor_dark'] }}
+                                    editorContentHeight={250}
+                                    onValidate={event => {
+                                                    if(event.detail.annotations.length > 0){
+                                                        setCodeEditorReturnsErrors(true)
+                                                    }else{
+                                                        setCodeEditorReturnsErrors(false)} }
+                                                    }
+                                />
+                            </Container>
+                        </SpaceBetween>
                     ),
                     isOptional: false
                 },
@@ -679,21 +725,12 @@ function FunctionCreatorSteps({addNotificationItem}){
                                     header={<Header variant="h2">Parámetros</Header>}
                                 />
 
-
-
-
-
-
-
-
                             <Container header={<Header variant="h2">Código</Header>}>
 
                                     <CodeView
                                         content={codeEditorValue}
                                         highlight={javascriptHighlight}
                                     />
-
-
                             </Container>
                         </SpaceBetween>
                     )

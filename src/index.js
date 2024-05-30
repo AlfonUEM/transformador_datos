@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import TestPage from "./pages/TestPage";
 import MainPage from "./pages/MainPage";
 import {HashRouter, Routes, Route} from "react-router-dom";
 import CreateFunctionPage from "./pages/CreateFunctionPage";

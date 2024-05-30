@@ -1,9 +1,10 @@
 const initialData = {
     availableFunctions: {
-        'task-1': { id: 'task-1', content: 'To Lower Case', visibility: 'public', jsCode: 'function transform(input, parameters){return input.toLowerCase()}', jsParameters: {}},
-        'task-2': { id: 'task-2', content: 'To Upper Case', visibility: 'public', jsCode: 'function transform(input, parameters){return input.toUpperCase()}', jsParameters: {}},
-        'task-3': { id: 'task-3', content: 'Devuelve parámetro', visibility: 'public', jsCode: 'function transform(input, parameters){return parameters.testfield}', jsParameters: {"testfield":{"fieldtype":"str", "value":"TEST111"}, "testfield2":{"fieldtype":"str", "value":"TEST222"}}},
-        'task-4': { id: 'task-4', content: '3Parametros', visibility: 'public', jsCode: "function transform(input, parameters){\n\n\t// tu código va aquí\n\treturn parameters[\"ParamStr\"] + \" \" + parameters[\"ParamInt\"] + \" \" + parameters[\"ParamBool\"];\n\n}", jsParameters: {"ParamStr":{"fieldtype":"str","value":"lala"},"ParamInt":{"fieldtype":"int","value":13},"ParamBool":{"fieldtype":"bool","value":true}} },
+        'tolowercase': { id: 'tolowercase', content: 'To Lower Case', visibility: 'public', jsCode: 'function transform(input, parameters){return input.toLowerCase()}', jsParameters: {}},
+        'touppercase': { id: 'touppercase', content: 'To Upper Case', visibility: 'public', jsCode: 'function transform(input, parameters){return input.toUpperCase()}', jsParameters: {}},
+        'add3params': { id: 'add3params', content: 'Añade 3 Parámetros', visibility: 'public', jsCode: "function transform(input, parameters){\n\n\t// tu código va aquí\n\treturn input + \" \" + parameters[\"ParamStr\"] + \" \" + parameters[\"ParamInt\"] + \" \" + parameters[\"ParamBool\"];\n\n}", jsParameters: {"ParamStr":{"fieldtype":"str","value":"lala"},"ParamInt":{"fieldtype":"int","value":13},"ParamBool":{"fieldtype":"bool","value":true}} },
+        'b64encode': { id: 'b64encode', content: 'Base64 Encode', visibility: 'public', jsCode: 'function transform(input, parameters){return btoa(input)}', jsParameters: {}},
+        'b64decode': { id: 'b64decode', content: 'Base64 Decode', visibility: 'public', jsCode: 'function transform(input, parameters){return atob(input)}', jsParameters: {}},
     },
     activeFunctions: {
     },
@@ -11,7 +12,7 @@ const initialData = {
         'public_functions_column': {
             id: 'public_functions_column',
             title: 'Funciones públicas',
-            functionIds: ['task-1', 'task-2', 'task-3', 'task-4'],
+            functionIds: ['tolowercase', 'touppercase', 'add3params', 'b64encode', 'b64decode'],
         },
         'private_functions_column': {
             id: 'private_functions_column',

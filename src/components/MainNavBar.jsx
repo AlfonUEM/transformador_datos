@@ -22,7 +22,6 @@ function MainNavBar({
         setVisible(false);
     }
     const confirmModal = () => {
-        //añadir función que verifique usuario
         setLoading(true)
         apiLogin(user, password).then(response => {
             if (response.status === 200) {
@@ -75,42 +74,11 @@ function MainNavBar({
                     href: "#",
                     title: "Maestro Codificador",
                     logo: {
-                        src: "/logo-small-top-navigation.svg",
-                        alt: "Maestro Codificador"
+                        src: "/maestro_codificador_logo_grande.png",
+                        alt: "logo"
                     }
                 }}
                 utilities={[
-                    /*{
-                   type: "button",
-                   text: "Link",
-                   href: "https://example.com/",
-                   external: true,
-                   externalIconAriaLabel: " (opens in a new tab)"
-               },
-               {
-                   type: "button",
-                   iconName: "notification",
-                   title: "Notifications",
-                   ariaLabel: "Notifications (unread)",
-                   badge: true,
-                   disableUtilityCollapse: false
-               },
-               {
-                   type: "menu-dropdown",
-                   iconName: "settings",
-                   ariaLabel: "Settings",
-                   title: "Settings",
-                   items: [
-                       {
-                           id: "settings-org",
-                           text: "Organizational settings"
-                       },
-                       {
-                           id: "settings-project",
-                           text: "Project settings"
-                       }
-                   ]
-               },*/
                     {
                         type: "menu-dropdown",
                         text: userLoggedIn,

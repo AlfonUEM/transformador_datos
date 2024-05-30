@@ -2,7 +2,6 @@ import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import {Grid} from "@cloudscape-design/components";
-import Button from "@cloudscape-design/components/button";
 import FunctionSettingsModal from "./FunctionSettingsModal";
 
 const FunctionContainer = styled.div`
@@ -10,11 +9,7 @@ const FunctionContainer = styled.div`
   border-radius: 10px;
   padding: 8px;
   margin-bottom: 8px;
-  //background-color: #0f1b2a;
-    //background-color: #7d8998;  
-  //background-color: #000716;
   background-color: #f8f8f8;
-    //color: #fbfbfb;
 `;
 
 export default class DNDFunction extends React.Component {

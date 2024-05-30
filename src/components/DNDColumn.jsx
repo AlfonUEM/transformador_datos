@@ -2,20 +2,13 @@ import React from 'react';
 import DNDFunction from "./DNDFunction";
 import { Droppable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
-import {Container, Box, Header, TextContent} from "@cloudscape-design/components";
-import SpaceBetween from "@cloudscape-design/components/space-between";
+import {Container, Header, TextContent} from "@cloudscape-design/components";
 import Button from "@cloudscape-design/components/button";
 
 
 const FunctionsList = styled.div`
   padding: 0px;
 `;
-
-/*const DNDColumnContainer = styled.div`
-  margin: 8px;
-  border: 1px solid lightgrey;
-  border-radius: 2px;
-`;*/
 
 const Title = styled.h3`
   padding: 1px;
@@ -25,7 +18,7 @@ export default class DNDColumn extends React.Component {
         return (
             <Container>
                 <Header variant="h4" actions={
-                    this.props.column.id === "active_functions_column" &&
+                    this.props.column.id === "active_functions_column" && this.props.isUserLoggedIn &&
                         <>
                         <Button
                             iconSvg={<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"

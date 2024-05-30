@@ -1,12 +1,15 @@
 import React from 'react';
 import {
     Container,
-    ContentLayout, CopyToClipboard,
-    Flashbar, FormField,
+    CopyToClipboard,
+    FormField,
     Grid,
-    Header, Input, Modal, Select,
+    Header,
+    Input,
+    Modal,
+    Select,
     Textarea,
-    TextContent, Toggle
+    Toggle
 } from "@cloudscape-design/components";
 import Box from "@cloudscape-design/components/box";
 import runTransformerFunction from "../utils/TransformerFunctionsUtils"
@@ -47,7 +50,6 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
             console.log(`Entro en !destination 1 : ${srcColumn.id}`);
             return;
         }
-
 
         // we want to remove the function from the active column in this case
         if (srcColumn.id === "active_functions_column" && (!destination || destination.droppableId !== source.droppableId)){
@@ -223,8 +225,6 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
         let updatedPrivateColumnFunctionIds = [];
         let publicFunctionIds = [];
         let updatedAvailableFunctions= {};
-        let updatedActiveFunctions = {};
-        let updatedActiveFunctionsColumn=[];
         let updatedDNDstate = {}
 
         for (let fId in dndState.availableFunctions){
@@ -233,20 +233,6 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
                 publicFunctionIds.push(fId);
             }
         }
-
-        for (let fId in dndState.activeFunctions){
-            if(dndState.activeFunctions[fId].visibility === "public"){
-                updatedActiveFunctions[fId] = {...dndState.activeFunctions[fId]}
-            }
-        }
-
-        updatedActiveFunctionsColumn = [...dndState.columns["active_functions_column"].functionIds];
-
-        dndState.columns["active_functions_column"].functionIds.forEach(fId => {
-            if(!publicFunctionIds.includes(fId)){
-                updatedActiveFunctionsColumn = updatedActiveFunctionsColumn.filter(id => id !== fId)
-            }
-        })
 
         newFunctions.forEach(newFunction => {
             let newUUID = uuidv4();
@@ -261,11 +247,10 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
         })
 
         updatedDNDstate = {availableFunctions: updatedAvailableFunctions,
-                            activeFunctions: updatedActiveFunctions,
+                            activeFunctions: structuredClone(dndState.activeFunctions),
                             columns: structuredClone(dndState.columns)}
 
         updatedDNDstate.columns["private_functions_column"].functionIds = updatedPrivateColumnFunctionIds;
-        updatedDNDstate.columns["active_functions_column"].functionIds = updatedActiveFunctionsColumn;
         setDndState(updatedDNDstate);
     }
 
@@ -359,6 +344,7 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
                                     openSaveActiveFunctionsModal={openSaveActiveFunctionsModal}
                                     openLoadActiveFunctionsModal={openLoadActiveFunctionsModal}
                                     privateFunctionsColumnInstructions={privateFunctionsColumnInstructions}
+                                    isUserLoggedIn={isUserLoggedIn}
                         />
                         <DNDColumn
                             key={dndState.columns["private_functions_column"].id}
@@ -370,6 +356,7 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
                             openSaveActiveFunctionsModal={openSaveActiveFunctionsModal}
                             openLoadActiveFunctionsModal={openLoadActiveFunctionsModal}
                             privateFunctionsColumnInstructions={privateFunctionsColumnInstructions}
+                            isUserLoggedIn={isUserLoggedIn}
                         />
                         </SpaceBetween>
                     </div>
@@ -384,6 +371,7 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
                             openSaveActiveFunctionsModal={openSaveActiveFunctionsModal}
                             openLoadActiveFunctionsModal={openLoadActiveFunctionsModal}
                             privateFunctionsColumnInstructions={privateFunctionsColumnInstructions}
+                            isUserLoggedIn={isUserLoggedIn}
                         />
                     </div>
                     </Grid>
