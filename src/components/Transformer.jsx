@@ -19,7 +19,7 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import { CodeView } from "@cloudscape-design/code-view";
 import Button from "@cloudscape-design/components/button";
 import Spinner from "@cloudscape-design/components/spinner";
-import {apiCreateCombination, apiCreateFunction, apiGetFunctions} from "../utils/API";
+import {apiCreateCombination, apiCreateFunction, apiGetCombinations, apiGetFunctions} from "../utils/API";
 
 function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
     const [transformationOutput, setTransformationOutput] = React.useState("");
@@ -33,6 +33,10 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
     const [debugEnabled, setDebugEnabled] = React.useState(false)
     const [privateFunctionsColumnInstructions, setPrivateFunctionsColumnInstructions] = React.useState(<p>Inicie sesión para cargar sus funciones privadas</p>);
     const [saveCombinationLoadingButtons, setSaveCombinationLoadingButtons] = React.useState(false);
+    const [loadCombinationNameList, setLoadCombinationNameList] = React.useState([]);
+    const [loadCombinationNameListLoading, setLoadCombinationNameListLoading] = React.useState(false);
+    const [loadCombinationList, setLoadCombinationList] = React.useState([]);
+    const [loadCombinationButtonDisabled, setLoadCombinationButtonDisabled] = React.useState(false);
 
     const onDragEnd = result => {
         const { destination, source, draggableId } = result;
@@ -266,17 +270,51 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
     }
 
 
-
+    function updateActiveFunctions(newActiveFunction ){
+        console.log(newActiveFunction)
+        let updatedDNDstate = {availableFunctions: structuredClone(dndState.availableFunctions),
+            activeFunctions: structuredClone(newActiveFunction.activeFunctions),
+            columns: structuredClone(dndState.columns)}
+        updatedDNDstate.columns["active_functions_column"].functionIds = structuredClone(newActiveFunction.activeColumnFunctionIds);
+        setDndState(updatedDNDstate);
+    }
 
     function openLoadActiveFunctionsModal(){
+        setLoadCombinationNameList([]);
+        setLoadCombinationName({});
+        setLoadCombinationNameListLoading(true);
         setModalLoadActiveFunctionsVisible(true);
+        setLoadCombinationButtonDisabled(true);
+        apiGetCombinations().then(response => {
+            if (response.status === 200) {
+                let returnedCombinations = {};
+                let combinationNameList = [];
+                response.body.content.forEach(entry => {
+                    returnedCombinations[entry[1]] = JSON.parse(entry[2]);
+                    combinationNameList.push({ label: entry[1], value: entry[1] });
+                });
+                setLoadCombinationList(returnedCombinations);
+                setLoadCombinationNameList(combinationNameList);
+                setLoadCombinationNameListLoading(false);
+
+
+
+            } else if (response.status === 403) {
+                setIsUserLoggedIn(false);
+            } else {
+                setModalLoadActiveFunctionsVisible(false);
+                addNotificationItem({
+                    type: "error",
+                    content: "Error al obtener las combinaciones del usuario",
+                });
+            }
+        });
+
     }
 
     function loadActiveFunctions(){
-        console.log("TODO: load the active function " + loadCombinationName);
-
+        updateActiveFunctions(loadCombinationList[loadCombinationName.label]);
         setModalLoadActiveFunctionsVisible(false);
-
     }
 
     function transformData(){
@@ -434,7 +472,7 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
                 <Box float="right">
                     <SpaceBetween direction="horizontal" size="xs">
                         <Button variant="secondary" onClick={() => setModalLoadActiveFunctionsVisible(false)}>Cancelar</Button>
-                        <Button variant="primary" onClick={()=> loadActiveFunctions()}>Cargar</Button>
+                        <Button variant="primary" onClick={()=> loadActiveFunctions()} disabled={loadCombinationButtonDisabled}>Cargar</Button>
                     </SpaceBetween>
                 </Box>
             }
@@ -445,16 +483,13 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
             >
                 <Select
                     selectedOption={loadCombinationName}
-                    onChange={({ detail }) =>
+                    onChange={({ detail }) => {
                         setLoadCombinationName(detail.selectedOption)
+                        setLoadCombinationButtonDisabled(false);
                     }
-                    options={[
-                        { label: "Option 1", value: "1" },
-                        { label: "Option 2", value: "2" },
-                        { label: "Option 3", value: "3" },
-                        { label: "Option 4", value: "4" },
-                        { label: "Option 5", value: "5" }
-                    ]}
+                    }
+                    options={loadCombinationNameList}
+                    statusType={loadCombinationNameListLoading ? "loading" : "finished"}
                 />
 
             </FormField>
