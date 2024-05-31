@@ -30,12 +30,11 @@ function FunctionParametersForm(props){
                             value={paramsState[parameter]["value"]}
                             //value={props.functionId}
                             onChange={event => {
-                                console.log("JODER");
-                                console.log(props.dndState);
-                                console.log(props.functionId);
-                                let paramsStateUpdated = {...paramsState};
-                                paramsStateUpdated[parameter]["value"] = event.detail.value;
-                                props.updateFunctionParameters(props.functionId, paramsStateUpdated);
+                                if(/^\d+$/.test(event.detail.value)) {
+                                    let paramsStateUpdated = {...paramsState};
+                                    paramsStateUpdated[parameter]["value"] = event.detail.value;
+                                    props.updateFunctionParameters(props.functionId, paramsStateUpdated);
+                                }
                             }
                             }
                         />
