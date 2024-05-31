@@ -462,7 +462,6 @@ function FunctionCreatorSteps({addNotificationItem}){
             steps={[
                 {
                     title: "Datos básicos",
-                    info: <Link variant="info">Info</Link>,
                     description:
                         "Cada función necesita un nombre con el que se visualizará en el transformador de datos y una descripción.",
                     content: (

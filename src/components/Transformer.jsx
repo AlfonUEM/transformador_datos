@@ -251,9 +251,13 @@ function Transformer({addNotificationItem, setIsUserLoggedIn, isUserLoggedIn}){
                             columns: structuredClone(dndState.columns)}
 
         updatedDNDstate.columns["private_functions_column"].functionIds = updatedPrivateColumnFunctionIds;
+
+        if(newFunctions.length === 0){
+            updatedDNDstate.activeFunctions = {};
+            updatedDNDstate.columns["active_functions_column"].functionIds = [];
+        }
         setDndState(updatedDNDstate);
     }
-
 
     function updateActiveFunctions(newActiveFunction ){
         console.log(newActiveFunction)
