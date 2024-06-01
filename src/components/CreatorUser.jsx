@@ -130,6 +130,8 @@ function CreatorUser({addNotificationItem}) {
                     }
                     if (email === "") {
                         setEmailFormFieldError("El email no puede estar vacío")
+                    } else if (!validateEmail(email)) {
+                        setEmailFormFieldError("Debe introducir una dirección de email correcta")
                     }
                     if (birthdate === "") {
                         setBirthdateFormFieldError("La fecha no puede estar vacía")
