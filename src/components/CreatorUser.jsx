@@ -57,7 +57,7 @@ function CreatorUser({addNotificationItem}) {
         return true;
     }
 
-    function validateEmail (email)  {
+    function validateEmail(email) {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     }
@@ -70,17 +70,17 @@ function CreatorUser({addNotificationItem}) {
             } else {
                 if (password === repassword) {
                     setLoading(true)
-                    apiRegisterUser(user,password,name,surname,email,birthdate,phone,country,province).then(response =>{
-                        if(response.status === 200){
+                    apiRegisterUser(user, password, name, surname, email, birthdate, phone, country, province).then(response => {
+                        if (response.status === 200) {
                             addNotificationItem({
                                 type: "success",
                                 content: "Usuario creada correctamente",
                             });
                             setLoading(false)
                             window.location.href = '#';
-                        }else if(response.status === 409) {
+                        } else if (response.status === 409) {
                             setUserFormFieldError("Usuario existente, elija otra nombre de usuario")
-                        }else {
+                        } else {
                             addNotificationItem({
                                 type: "error",
                                 content: "Error al crear usuario",
@@ -116,7 +116,6 @@ function CreatorUser({addNotificationItem}) {
                 if (name !== "" && surname !== "" && email !== "" && birthdate !== "") {
                     if (!validateEmail(email)) {
                         setEmailFormFieldError("Debe introducir una dirección de email correcta")
-
                     } else {
                         setActiveStepIndex(requestedStepIndex)
                     }
@@ -130,6 +129,8 @@ function CreatorUser({addNotificationItem}) {
                     }
                     if (email === "") {
                         setEmailFormFieldError("El email no puede estar vacío")
+                    } else if (!validateEmail(email)) {
+                        setEmailFormFieldError("Debe introducir una dirección de email correcta")
                     }
                     if (birthdate === "") {
                         setBirthdateFormFieldError("La fecha no puede estar vacía")
@@ -234,7 +235,7 @@ function CreatorUser({addNotificationItem}) {
                     nextButton: "Siguiente",
                     submitButton: "Crear usuario",
                     optional: "opcional",
-                    submitButtonLoadingAnnouncement:"Creando usuario"
+                    submitButtonLoadingAnnouncement: "Creando usuario"
                 }}
                 isLoadingNextStep={loading}
                 onNavigate={validateNext}
