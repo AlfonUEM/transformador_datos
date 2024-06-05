@@ -1,5 +1,5 @@
 
-const serverAddress= "194.164.162.70:4567"
+const serverAddress= "194.164.162.70:4567/api"
 export async function authenticatedPostRequest(path, post_json){
     const url = "http://" + serverAddress + path;
     let response = await fetch(url, {
