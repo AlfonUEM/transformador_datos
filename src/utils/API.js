@@ -1,7 +1,7 @@
 
 const serverAddress= "194.164.162.70:4567/api"
 export async function authenticatedPostRequest(path, post_json){
-    const url = "http://" + serverAddress + path;
+    const url = "https://" + serverAddress + path;
     let response = await fetch(url, {
         method: "POST",
         body: JSON.stringify(post_json),
@@ -20,7 +20,7 @@ export async function authenticatedPostRequest(path, post_json){
 
 
 export async function unauthenticatedPostRequest(path, post_json){
-    const url = "http://" + serverAddress + path;
+    const url = "https://" + serverAddress + path;
     let response = await fetch(url, {
         method: "POST",
         body:  JSON.stringify(post_json),
@@ -36,7 +36,7 @@ export async function unauthenticatedPostRequest(path, post_json){
 }
 
 export async function authenticatedGetRequest(path){
-    const url = "http://" + serverAddress + path;
+    const url = "https://" + serverAddress + path;
     let response = await fetch(url, {
         method: "GET",
         headers: {
